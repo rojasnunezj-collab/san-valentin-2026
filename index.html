@@ -5,140 +5,110 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Para Wen</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Playfair+Display:ital@0;1&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Monsieur+La+Doulaise&display=swap');
 
         :root {
-            --gold: #ffd700;
-            --gold-shadow: #b8860b;
-            --ink: #2c1b18;
-            --spell-glow: rgba(0, 255, 255, 0.6);
+            --gold: #c5a059;
+            --gold-light: #f1e2be;
+            --ink: #2b1b17;
+            --ink-faint: rgba(43, 27, 23, 0.15); /* Huellas sutiles */
         }
 
         body {
-            margin: 0;
-            height: 100vh;
-            overflow: hidden;
-            background-color: #000;
-            font-family: 'Playfair Display', serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
+            margin: 0; height: 100vh; overflow: hidden;
+            background: #000; font-family: 'Cinzel Decorative', serif;
+            display: flex; justify-content: center; align-items: center;
         }
 
-        /* --- FONDO PERGAMINO (Con textura) --- */
+        /* --- CAPA 1: PERGAMINO CINEMÁTICO --- */
         #parchment {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: #e3d4ad;
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: #dccf9e;
             background-image: url("https://www.transparenttextures.com/patterns/aged-paper.png");
-            box-shadow: inset 0 0 100px rgba(0,0,0,0.5);
-            opacity: 0;
-            transition: opacity 2s ease-in;
-            z-index: 0;
+            /* Vignette fuerte para dar profundidad */
+            box-shadow: inset 0 0 150px rgba(0,0,0,0.8); 
+            opacity: 0; transition: opacity 2s ease; z-index: 1;
         }
 
-        /* --- INTRODUCCIÓN (NEGRO Y ORO) --- */
-        #intro-screen {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #000;
-            z-index: 100;
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            transition: opacity 1.5s ease-out;
-            cursor: pointer;
+        /* --- CAPA 2: EFECTOS (HUELLAS) --- */
+        .footstep {
+            position: absolute; font-size: 20px; color: var(--ink);
+            opacity: 0; transform: rotate(90deg); filter: blur(0.8px);
+            z-index: 2; pointer-events: none;
         }
 
-        .typewriter {
-            font-family: 'Cinzel Decorative', serif;
+        /* --- CAPA 3: INTERFAZ --- */
+        #ui-layer {
+            position: relative; z-index: 10; width: 90%; max-width: 600px;
+            text-align: center; opacity: 0; transition: opacity 1s;
+        }
+
+        /* Tipografía Dorada Premium */
+        h1, h2 {
             color: var(--gold);
-            font-size: 1.5rem;
-            text-shadow: 0 0 10px var(--gold-shadow);
-            border-right: 2px solid var(--gold);
-            white-space: nowrap;
-            overflow: hidden;
-            animation: typing 3.5s steps(40, end), blink .75s step-end infinite;
-            max-width: 90%;
+            text-shadow: 2px 2px 0px #000, 0 0 20px rgba(197, 160, 89, 0.5);
+            margin: 10px 0; letter-spacing: 2px;
         }
-
-        .tap-hint {
-            color: #666; font-size: 0.8rem; margin-top: 20px;
-            opacity: 0; animation: fadeIn 2s forwards 3.5s;
+        
+        /* Texto manuscrito del mapa */
+        .handwritten {
+            font-family: 'Monsieur La Doulaise', cursive;
+            color: var(--ink); font-size: 2rem; font-weight: bold;
+            opacity: 0.8; margin: 20px 0;
+            text-shadow: 0 0 1px rgba(0,0,0,0.1);
         }
-
-        /* --- CONTENIDO DEL JUEGO --- */
-        #game-content {
-            position: relative; z-index: 10;
-            width: 90%; max-width: 600px;
-            opacity: 0; display: none;
-            transition: opacity 1s;
-        }
-
-        h1, h2, h3 {
-            font-family: 'Cinzel Decorative', serif;
-            color: var(--gold);
-            /* Sombra negra para que el oro se lea bien en el pergamino */
-            text-shadow: 2px 2px 0px #000, 0 0 15px rgba(255, 215, 0, 0.5);
-            margin: 10px 0;
-        }
-
-        p { font-size: 1.2rem; color: #4a3b32; font-weight: bold; }
 
         input {
-            background: rgba(0,0,0,0.1);
-            border: none; border-bottom: 3px solid var(--gold);
-            color: #2c1b18; font-family: 'Cinzel Decorative', serif;
-            font-size: 1.5rem; text-align: center; width: 100%;
-            padding: 10px; margin: 20px 0; outline: none; font-weight: bold;
+            background: transparent; border: none; border-bottom: 2px solid var(--gold);
+            color: var(--ink); font-family: 'Cinzel Decorative', serif; font-weight: bold;
+            font-size: 1.5rem; text-align: center; width: 80%;
+            padding: 10px; margin: 30px 0; outline: none;
+            transition: 0.3s;
         }
+        input:focus { border-bottom-color: #000; }
 
-        .btn-gold {
-            background: linear-gradient(45deg, #d4af37, #ffd700);
-            color: #000; border: 2px solid #000;
-            padding: 15px 40px; font-family: 'Cinzel Decorative', serif;
-            font-weight: 900; font-size: 1.1rem;
-            cursor: pointer; border-radius: 5px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-            transition: transform 0.2s;
-            margin-top: 10px;
+        .btn-epic {
+            background: linear-gradient(135deg, var(--gold), #8a6e3e);
+            color: #1a0f0a; border: 1px solid #4a3b32;
+            padding: 15px 40px; font-family: 'Cinzel Decorative', serif; font-weight: 900;
+            font-size: 1.1rem; cursor: pointer;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+            transition: transform 0.1s, box-shadow 0.1s;
+            text-transform: uppercase; letter-spacing: 1px;
         }
-        .btn-gold:active { transform: scale(0.95); }
+        .btn-epic:active { transform: scale(0.98); box-shadow: 0 5px 10px rgba(0,0,0,0.3); }
 
-        /* --- ANIMACIONES Y EFECTOS --- */
-        
-        /* Destello Mágico (Lento y elegante) */
-        #flash-overlay {
+        /* --- INTRO SCREEN --- */
+        #intro {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, rgba(173, 216, 230, 0.4) 50%, transparent 100%);
-            opacity: 0; pointer-events: none; z-index: 50;
-            transition: opacity 1.5s ease; /* 1.5 segundos de duración */
+            background: #000; z-index: 100;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            cursor: pointer;
         }
-        .flash-active { opacity: 1 !important; }
-
-        /* Huellas */
-        .footstep {
-            position: absolute; font-size: 24px; color: #4a3b32;
-            opacity: 0; transform: rotate(90deg); filter: blur(0.5px);
-            z-index: 1; pointer-events: none;
+        .typewriter {
+            color: var(--gold); font-size: 1.4rem;
+            border-right: 2px solid var(--gold);
+            white-space: nowrap; overflow: hidden;
+            animation: typing 4s steps(40, end), blink .75s step-end infinite;
         }
 
-        /* Fuegos Artificiales Finales */
-        .firework {
-            position: absolute; width: 6px; height: 6px; border-radius: 50%;
-            animation: explode 1s ease-out forwards; z-index: 20;
+        /* --- EFECTOS DE MAGIA (SHOCKWAVE) --- */
+        @keyframes shockwave {
+            0% { transform: scale(1); opacity: 1; box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.7); }
+            100% { transform: scale(1.05); opacity: 0; box-shadow: 0 0 100px 100px rgba(255, 215, 0, 0); }
         }
+        .spell-cast { animation: shockwave 0.8s ease-out; }
 
-        @keyframes typing { from { width: 0 } to { width: 100% } }
-        @keyframes blink { 50% { border-color: transparent } }
-        @keyframes fadeIn { to { opacity: 1 } }
-        @keyframes explode { to { transform: scale(10); opacity: 0; } }
-        @keyframes walk { 0% { opacity: 0; } 50% { opacity: 0.6; } 100% { opacity: 0; } }
+        /* --- CANVAS FINAL --- */
+        canvas { position: fixed; top: 0; left: 0; z-index: 50; pointer-events: none; }
 
         .hidden { display: none !important; }
+        
+        /* Animaciones CSS */
+        @keyframes typing { from { width: 0 } to { width: 100% } }
+        @keyframes blink { 50% { border-color: transparent } }
+        @keyframes fadeFoot { 0% { opacity: 0; } 50% { opacity: 0.2; } 100% { opacity: 0; } } /* Opacidad baja (0.2) */
 
-        /* Estilo botón NO */
-        #no-btn {
-            background: transparent; border: none; color: #555;
-            box-shadow: none; font-size: 0.9rem;
-        }
     </style>
 </head>
 <body>
@@ -147,41 +117,38 @@
     <source src="https://ia801309.us.archive.org/23/items/Harry_Potter_Theme_Song_Hedwigs_Theme/Harry_Potter_Theme_Song_Hedwigs_Theme.mp3" type="audio/mpeg">
 </audio>
 
-<div id="parchment"></div>
-
-<div id="flash-overlay"></div>
-
-<div id="intro-screen" onclick="startMagic()">
+<div id="intro" onclick="startCinematic()">
     <div class="typewriter">Juro solemnemente...</div>
-    <div class="tap-hint">(Toca la pantalla para comenzar)</div>
+    <p style="color: #444; font-size: 0.8rem; margin-top: 20px; opacity: 0; animation: fadeIn 2s 4s forwards;">(Toca la pantalla)</p>
 </div>
 
-<div id="game-content">
+<div id="parchment"></div>
+<canvas id="particleCanvas"></canvas>
+
+<div id="ui-layer">
     
-    <div id="map-header">
-        <h2 style="font-size: 1rem; letter-spacing: 3px;">MESSRS. MOONY, WORMTAIL, PADFOOT & PRONGS</h2>
-        <p>Presentan sus respetos a la Srta. <strong>Wen</strong></p>
-        <hr style="border: 1px solid #4a3b32; margin: 20px auto; width: 60%;">
+    <div id="header-box">
+        <h2 style="font-size: 0.9rem; opacity: 0.8;">MESSRS. MOONY, WORMTAIL, PADFOOT & PRONGS</h2>
+        <div class="handwritten">Presentan sus respetos a la Srta. Wen</div>
+        <hr style="border: 0; border-top: 1px solid var(--ink); width: 50%; margin: 20px auto; opacity: 0.3;">
     </div>
 
-    <div id="question-box">
-        <h1 id="q-text" style="font-size: 1.8rem; line-height: 1.3;">Cargando magia...</h1>
-        
+    <div id="game-box">
+        <h1 id="q-text" style="font-size: 1.6rem; margin-bottom: 40px;">Cargando...</h1>
         <input type="text" id="ans-input" placeholder="Lumos..." autocomplete="off">
-        
-        <button class="btn-gold" onclick="castSpell()">✨ REVELAR ✨</button>
-        <p id="error-msg" style="color: #8b0000; font-size: 1rem; min-height: 20px; margin-top: 15px;"></p>
+        <button class="btn-epic" onclick="castSpell()">Revelar Mapa</button>
+        <p id="msg" style="color: #800; font-weight: bold; margin-top: 15px; min-height: 20px;"></p>
     </div>
 
     <div id="final-box" class="hidden">
-        <h1 style="font-size: 2.5rem; text-shadow: 0 0 20px #fff, 2px 2px 0 #000;">⚡ Travesura Realizada ⚡</h1>
-        <p style="margin: 30px 0; font-size: 1.3rem;">El mapa ha revelado todos sus secretos.</p>
+        <h1 style="font-size: 3rem; margin-bottom: 10px;">Travesura Realizada</h1>
+        <p style="color: #000; font-size: 1.2rem; margin-bottom: 40px;">El juramento ha sido completado.</p>
         
-        <h2 style="margin-bottom: 30px;">¿Quieres ser mi San Valentín?</h2>
-        
-        <button class="btn-gold" style="font-size: 1.3rem;" onclick="finalExplosion()">¡SÍ, ACEPTO!</button>
+        <h2>¿Quieres ser mi San Valentín?</h2>
         <br>
-        <button id="no-btn" class="btn-gold" onclick="handleNo()">No</button>
+        <button class="btn-epic" style="font-size: 1.2rem;" onclick="explodeMagic()">¡SÍ, ACEPTO!</button>
+        <br>
+        <button id="no-btn" style="background:none; border:none; color:#555; margin-top:15px; font-family:'Cinzel Decorative';" onclick="moveNo()">No</button>
     </div>
 
 </div>
@@ -193,40 +160,38 @@
             { q: "¿Cuál fue la primera foto nuestra que te gustó?", a: "espejo" },
             { q: "¿A qué lugar mágico viajamos juntos por primera vez?", a: "ayacucho" }
         ],
-        errs: ["El mapa no miente... intenta de nuevo.", "¡Por Merlín! Concéntrate.", "La tinta se desvanece... error."]
+        errs: ["El mapa no miente... intenta de nuevo.", "Mala memoria... ¿Obliviate?", "La tinta se desvanece..."]
     };
 
     let step = 0;
     let noIdx = 0;
 
-    // --- INICIO ---
-    function startMagic() {
-        const music = document.getElementById('bg-music');
-        music.volume = 0.6;
-        music.play();
+    /* --- MOTOR CINEMÁTICO --- */
+    function startCinematic() {
+        const audio = document.getElementById('bg-music');
+        audio.volume = 0.5;
+        audio.play();
 
-        document.getElementById('intro-screen').style.opacity = 0;
+        const intro = document.getElementById('intro');
+        intro.style.transition = "opacity 2s";
+        intro.style.opacity = 0;
+
         setTimeout(() => {
-            document.getElementById('intro-screen').style.display = 'none';
-            
-            // Mostrar pergamino
+            intro.style.display = 'none';
             document.getElementById('parchment').style.opacity = 1;
             
-            // Mostrar contenido
-            const content = document.getElementById('game-content');
-            content.style.display = 'block';
-            setTimeout(() => content.style.opacity = 1, 500);
-            
-            startFootsteps();
-            loadQ();
-        }, 1500);
+            setTimeout(() => {
+                document.getElementById('ui-layer').style.opacity = 1;
+                startGhostFootsteps(); // Huellas sutiles
+                loadQ();
+            }, 1000);
+        }, 2000);
     }
 
-    // --- JUEGO ---
     function loadQ() {
         document.getElementById('q-text').innerText = data.qs[step].q;
         document.getElementById('ans-input').value = "";
-        document.getElementById('error-msg').innerText = "";
+        document.getElementById('msg').innerText = "";
     }
 
     function castSpell() {
@@ -238,76 +203,144 @@
         else if(val === correct) ok = true;
 
         if(ok) {
-            // DESTELLO LENTO Y ELEGANTE
-            const flash = document.getElementById('flash-overlay');
-            flash.classList.add('flash-active');
+            // EFECTO ONDA DE CHOQUE
+            const ui = document.getElementById('ui-layer');
+            ui.classList.add('spell-cast');
             
-            // Vibración
-            document.body.style.transform = "scale(1.02)";
-            setTimeout(() => document.body.style.transform = "scale(1)", 200);
+            // Partículas simples de éxito
+            spawnParticles(window.innerWidth/2, window.innerHeight/2, 20);
 
             setTimeout(() => {
-                flash.classList.remove('flash-active');
+                ui.classList.remove('spell-cast');
                 step++;
                 if(step < data.qs.length) loadQ();
                 else showFinal();
-            }, 1500); // Espera 1.5 segundos (lento)
+            }, 600);
         } else {
-            document.getElementById('error-msg').innerText = data.errs[Math.floor(Math.random()*data.errs.length)];
-            document.getElementById('game-content').style.transform = "translateX(10px)";
-            setTimeout(()=>document.getElementById('game-content').style.transform = "translateX(0)", 200);
+            document.getElementById('msg').innerText = data.errs[Math.floor(Math.random()*data.errs.length)];
+            // Shake
+            const ui = document.getElementById('ui-layer');
+            ui.style.transform = "translateX(5px)";
+            setTimeout(()=>ui.style.transform = "translateX(0)", 100);
         }
     }
 
-    // --- VISUALES ---
-    function startFootsteps() {
+    function showFinal() {
+        document.getElementById('game-box').classList.add('hidden');
+        document.getElementById('header-box').classList.add('hidden');
+        
+        const final = document.getElementById('final-box');
+        final.classList.remove('hidden');
+        final.style.opacity = 0;
+        setTimeout(()=>final.style.opacity = 1, 500);
+    }
+
+    function moveNo() {
+        const btn = document.getElementById('no-btn');
+        const txts = ["¿Segura?", "Piénsalo...", "Imposible", "Wen..."];
+        btn.innerText = txts[noIdx++ % txts.length];
+    }
+
+    /* --- SISTEMA DE HUELLAS (SUTIL) --- */
+    function startGhostFootsteps() {
         setInterval(() => {
-            if(Math.random() > 0.5) return;
+            if(Math.random() > 0.4) return; // Menos frecuencia
             const f = document.createElement('div');
             f.className = 'footstep';
             f.innerHTML = "👣";
+            // Posición aleatoria
             f.style.left = Math.random() * 80 + 10 + '%';
             f.style.top = Math.random() * 80 + 10 + '%';
             f.style.transform = `rotate(${Math.random()*360}deg)`;
-            f.style.animation = "walk 4s forwards";
+            f.style.animation = "fadeFoot 5s forwards"; // Animación lenta y transparente
             document.getElementById('parchment').appendChild(f);
-            setTimeout(() => f.remove(), 4000);
-        }, 800);
+            setTimeout(() => f.remove(), 5000);
+        }, 500);
     }
 
-    function showFinal() {
-        document.getElementById('question-box').classList.add('hidden');
-        document.getElementById('map-header').classList.add('hidden');
-        document.getElementById('final-box').classList.remove('hidden');
-    }
+    /* --- SISTEMA DE PARTÍCULAS CANVAS (EL FINAL ÉPICO) --- */
+    const canvas = document.getElementById('particleCanvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    let particles = [];
 
-    function handleNo() {
-        const txt = ["¿Segura?", "Piénsalo bien...", "Imposible.", "Wen..."];
-        document.getElementById('no-btn').innerText = txt[noIdx % txt.length];
-        noIdx++;
-    }
-
-    function finalExplosion() {
-        document.querySelector('h2').innerText = "¡SIEMPRE!";
-        document.querySelector('.btn-gold').style.display = 'none';
+    function explodeMagic() {
+        document.querySelector('.btn-epic').style.display = 'none';
         document.getElementById('no-btn').style.display = 'none';
+        document.querySelector('h2').innerText = "¡JURAMENTO ETERNO!";
         
-        // Bucle de fuegos artificiales
+        // Loop de animación
+        loop();
+        
+        // Explosiones continuas
         setInterval(() => {
-            const fw = document.createElement('div');
-            fw.className = 'firework';
-            fw.style.left = Math.random() * 100 + '%';
-            fw.style.top = Math.random() * 100 + '%';
-            fw.style.backgroundColor = Math.random() > 0.5 ? '#ffd700' : '#00bfff';
-            document.body.appendChild(fw);
-            setTimeout(() => fw.remove(), 1000);
-        }, 100);
+            spawnParticles(Math.random()*canvas.width, Math.random()*canvas.height, 50);
+        }, 800);
+        
+        // Explosión inicial masiva
+        spawnParticles(canvas.width/2, canvas.height/2, 300);
     }
 
-    // Enter key
+    function spawnParticles(x, y, count) {
+        for(let i=0; i<count; i++) {
+            particles.push(new Particle(x, y));
+        }
+    }
+
+    class Particle {
+        constructor(x, y) {
+            this.x = x;
+            this.y = y;
+            const angle = Math.random() * Math.PI * 2;
+            const speed = Math.random() * 5 + 2;
+            this.vx = Math.cos(angle) * speed;
+            this.vy = Math.sin(angle) * speed;
+            this.life = 1;
+            this.decay = Math.random() * 0.02 + 0.01;
+            this.color = Math.random() > 0.5 ? '#ffd700' : '#87CEEB'; // Oro y Azul Mágico
+            this.size = Math.random() * 3 + 1;
+        }
+        update() {
+            this.x += this.vx;
+            this.y += this.vy;
+            this.vy += 0.05; // Gravedad suave
+            this.life -= this.decay;
+            this.size *= 0.95;
+        }
+        draw() {
+            ctx.fillStyle = this.color;
+            ctx.globalAlpha = this.life;
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+            ctx.fill();
+        }
+    }
+
+    function loop() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        particles.forEach((p, index) => {
+            p.update();
+            p.draw();
+            if(p.life <= 0) particles.splice(index, 1);
+        });
+        requestAnimationFrame(loop);
+    }
+
+    window.addEventListener('resize', () => {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    });
+
+    // Enter key support
     document.getElementById('ans-input').addEventListener("keypress", (e) => {
         if(e.key === "Enter") castSpell();
     });
+
+    // Animación de fade in CSS
+    const style = document.createElement('style');
+    style.innerHTML = `@keyframes fadeIn { to { opacity: 1; } }`;
+    document.head.appendChild(style);
 
 </script>
 </body>
