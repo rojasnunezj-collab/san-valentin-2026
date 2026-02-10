@@ -3,226 +3,311 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Travesura Realizada</title>
+    <title>Mapa del Merodeador</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Montserrat:wght@400;600&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Playfair+Display:ital,wght@0,400;1,400&display=swap');
 
         :root {
-            --gold: #d4af37;
-            --spell-blue: #00d4ff;
-            --dark: #050505;
+            --gold: #d4af37; /* Dorado Hogwarts */
+            --wax: #f0f0f0;  /* Color cera de vela */
+            --flame: #ffcc00; /* Color llama */
+            --spell: #a6e7ff; /* Azul pálido mágico */
+            --bg-dark: #050510;
         }
 
-        body, html {
-            margin: 0; padding: 0; width: 100%; height: 100%;
-            overflow: hidden; background: #000;
-            font-family: 'Montserrat', sans-serif;
+        body {
+            background: radial-gradient(circle at bottom, #0b0b1a 0%, #000000 100%);
             color: var(--gold);
+            font-family: 'Playfair Display', serif;
+            margin: 0;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
         }
 
-        /* --- VIDEO DE FONDO Y VELAS --- */
-        #video-bg {
+        /* --- VELAS FLOTANTES (CSS PURO) --- */
+        #great-hall {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            object-fit: cover; opacity: 0.3; z-index: -1;
-        }
-
-        #candles-container {
-            position: fixed; width: 100%; height: 100%; z-index: 0;
-            pointer-events: none;
+            pointer-events: none; z-index: 0;
         }
 
         .candle {
-            position: absolute; width: 4px; height: 30px;
-            background: #fff; border-radius: 2px;
-            box-shadow: 0 0 10px #fff, 0 -5px 15px orange;
-            animation: flicker 2s infinite alternate, floatUp 15s linear infinite;
+            position: absolute;
+            width: 8px;
+            height: 35px;
+            background: linear-gradient(to bottom, #fff, #e0e0e0);
+            border-radius: 4px;
+            box-shadow: 0 5px 10px rgba(0,0,0,0.3);
+            animation: float 6s ease-in-out infinite alternate;
         }
-        @keyframes flicker { 0% { opacity: 0.8; } 100% { opacity: 1; } }
-        @keyframes floatUp { from { transform: translateY(110vh); } to { transform: translateY(-20vh); } }
 
-        /* --- DESTELLO EXPELLIARMUS --- */
-        #spell-flash {
+        /* La llama de la vela */
+        .candle::before {
+            content: '';
+            position: absolute;
+            top: -12px; left: 1px;
+            width: 6px; height: 12px;
+            background: var(--flame);
+            border-radius: 50% 50% 20% 20%;
+            box-shadow: 0 0 15px var(--flame), 0 0 30px orange;
+            animation: flicker 1s infinite alternate;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-20px); }
+        }
+        @keyframes flicker {
+            0% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(0.9); opacity: 0.8; }
+        }
+
+        /* --- DESTELLO MÁGICO SUAVE --- */
+        #lumos-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: white; box-shadow: inset 0 0 100px var(--spell-blue);
-            z-index: 100; opacity: 0; pointer-events: none;
+            background: radial-gradient(circle, rgba(166, 231, 255, 0.4) 0%, transparent 70%);
+            opacity: 0; pointer-events: none; z-index: 20;
+            transition: opacity 1.5s ease; /* Transición lenta */
         }
-        .flash-anim { animation: expelliarmus 0.5s ease-out; }
-        @keyframes expelliarmus {
-            0% { opacity: 0; } 50% { opacity: 1; } 100% { opacity: 0; }
+        .active-spell { opacity: 1 !important; }
+
+        /* --- INTERFAZ --- */
+        #parchment {
+            position: relative; z-index: 10;
+            width: 85%; max-width: 500px;
+            padding: 30px;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            background: rgba(0, 0, 0, 0.6); /* Fondo oscuro semitransparente */
+            backdrop-filter: blur(5px);
+            border-radius: 20px;
+            box-shadow: 0 0 50px rgba(0,0,0,0.5);
+            transition: transform 0.5s;
         }
 
-        /* --- CONTENEDOR PRINCIPAL --- */
-        #interface {
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            height: 100vh; position: relative; z-index: 10;
-        }
+        h1, h2 { font-family: 'Cinzel Decorative', serif; margin: 10px 0; text-shadow: 0 0 10px var(--gold); }
+        h1 { font-size: 1.8rem; }
+        p { font-size: 1.1rem; line-height: 1.6; }
 
-        #magic-card {
-            background: rgba(0, 0, 0, 0.75);
-            border: 2px solid var(--gold);
-            padding: 40px 20px; border-radius: 15px;
-            width: 85%; max-width: 450px; text-align: center;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 0 30px rgba(212, 175, 55, 0.2);
+        .separator {
+            height: 2px; width: 100px; background: var(--gold);
+            margin: 20px auto; border-radius: 50%;
+            box-shadow: 0 0 10px var(--gold);
         }
-
-        h1 { font-family: 'Cinzel Decorative', serif; font-size: 1.8rem; margin-bottom: 5px; }
-        .separator { height: 1px; width: 70%; background: var(--gold); margin: 15px auto; opacity: 0.5; }
 
         input {
             background: transparent; border: none; border-bottom: 2px solid var(--gold);
-            color: #fff; font-size: 1.2rem; text-align: center; width: 90%;
-            margin: 25px 0; outline: none; padding: 10px;
+            color: #fff; font-family: 'Cinzel Decorative', serif;
+            font-size: 1.2rem; text-align: center; width: 100%;
+            padding: 10px; margin: 25px 0; outline: none;
         }
 
         .btn {
-            background: var(--gold); color: #000; border: none;
-            padding: 15px 30px; font-family: 'Cinzel Decorative', serif;
-            font-weight: bold; border-radius: 50px; cursor: pointer;
-            width: 100%; transition: 0.3s;
+            background: transparent;
+            color: var(--gold);
+            border: 2px solid var(--gold);
+            padding: 15px 40px;
+            font-family: 'Cinzel Decorative', serif;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: 0.5s;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-top: 10px;
         }
 
-        .hidden { display: none !important; }
+        .btn:hover {
+            background: var(--gold);
+            color: #000;
+            box-shadow: 0 0 30px var(--gold);
+        }
 
-        /* Estilo para los diálogos del botón NO */
-        #no-btn { background: transparent; border: 1px solid #444; color: #666; margin-top: 10px; }
+        #no-btn { border-color: #666; color: #888; font-size: 0.8rem; padding: 10px 20px; border: none; }
+
+        .hidden { display: none; }
+
+        /* Animación final de huellas */
+        .footstep {
+            position: absolute; font-size: 20px; opacity: 0;
+            animation: walk 4s linear forwards;
+        }
+        @keyframes walk { 0% { opacity: 0; } 20% { opacity: 1; } 80% { opacity: 1; } 100% { opacity: 0; } }
+
     </style>
 </head>
 <body>
 
-<div id="spell-flash"></div>
-
-<video id="video-bg" autoplay muted loop playsinline>
-    <source src="https://assets.mixkit.co/videos/preview/mixkit-starry-night-sky-over-a-calm-lake-4375-large.mp4" type="video/mp4">
-</video>
-
-<div id="candles-container"></div>
-
-<audio id="audio-hp" loop>
-    <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3" type="audio/mpeg">
+<audio id="bg-music" loop>
+    <source src="https://ia801309.us.archive.org/23/items/Harry_Potter_Theme_Song_Hedwigs_Theme/Harry_Potter_Theme_Song_Hedwigs_Theme.mp3" type="audio/mpeg">
 </audio>
 
-<div id="interface">
-    <div id="magic-card">
-        <div id="screen-1">
-            <h1>"Travesura Realizada"</h1>
-            <div class="separator"></div>
-            <p style="font-style: italic;">Juro solemnemente que mis intenciones no son buenas...</p>
-            <br>
-            <button class="btn" onclick="iniciar()">Revelar Mapa</button>
-        </div>
+<div id="great-hall"></div>
 
-        <div id="screen-2" class="hidden">
-            <h2 id="q-title" style="font-family: 'Cinzel Decorative';">Hechizo de Apertura</h2>
-            <p id="q-text" style="font-size: 0.9rem; opacity: 0.8;"></p>
-            <input type="text" id="ans-input" placeholder="Tu respuesta..." autocomplete="off">
-            <button class="btn" onclick="validar()">Lanzar Hechizo</button>
-            <p id="error-msg" style="color: #ff4444; font-size: 0.8rem; margin-top: 15px; min-height: 20px;"></p>
-        </div>
+<div id="lumos-overlay"></div>
 
-        <div id="screen-3" class="hidden">
-            <h1>✨ Propuesta Mágica ✨</h1>
-            <div class="separator"></div>
-            <p>Has completado el mapa del merodeador.</p>
-            <h2 style="font-size: 1.4rem;">¿Quieres ser mi San Valentín?</h2>
-            <button class="btn" style="background: #00ff41; color: #000;" onclick="finalizar()">¡SÍ, ACEPTO!</button>
-            <button class="btn" id="no-btn" onclick="piensalo()">No</button>
-        </div>
-
-        <div id="screen-4" class="hidden">
-            <h1 style="color: var(--gold); font-size: 2.2rem;">⚡</h1>
-            <h2>Travesura Realizada</h2>
-            <p>Nos vemos en el Gran Comedor.</p>
-        </div>
+<div id="parchment">
+    
+    <div id="screen-start">
+        <h1 style="letter-spacing: 3px;">Messrs. Moony, Wormtail, Padfoot & Prongs</h1>
+        <div class="separator"></div>
+        <p style="font-style: italic;">Presentan sus respetos a la Srta. [NOMBRE DE ELLA] y le piden que realice el encantamiento de apertura.</p>
+        <br>
+        <button class="btn" onclick="openMap()">Juro solemnemente que mis intenciones no son buenas</button>
     </div>
+
+    <div id="screen-game" class="hidden">
+        <h2 id="q-title">Encantamiento I</h2>
+        <div class="separator"></div>
+        <p id="q-text">Cargando...</p>
+        
+        <input type="text" id="ans-input" placeholder="Agita tu varita..." autocomplete="off">
+        
+        <button class="btn" onclick="castSpell()">Lanzar Hechizo</button>
+        <p id="feedback" style="min-height: 20px; color: #ff6b6b; font-size: 0.9rem; margin-top: 15px; font-style: italic;"></p>
+    </div>
+
+    <div id="screen-final" class="hidden">
+        <h1>✨ Travesura Realizada ✨</h1>
+        <div class="separator"></div>
+        <p>El mapa ha revelado el secreto más profundo.</p>
+        <br>
+        <h2 style="font-size: 1.5rem; line-height: 1.4;">¿Me harías el honor de ser mi pareja de baile en este San Valentín?</h2>
+        <br>
+        <button class="btn" onclick="acceptProposal()">¡Sí, acepto!</button>
+        <br>
+        <button id="no-btn" onclick="handleNo()">No (Avada Kedavra)</button>
+    </div>
+
+    <div id="screen-love" class="hidden">
+        <h1 style="font-size: 3rem;">⚡ ❤️ ⚡</h1>
+        <p style="font-size: 1.2rem;">Nox.</p>
+        <p style="font-size: 0.8rem; opacity: 0.7;">(Apaga la luz y bésame)</p>
+    </div>
+
 </div>
 
 <script>
-    const data = {
-        qs: [
-            { q: "¿En qué fecha (DD/MM/AAAA) comenzó nuestra historia?", a: "24/04/2024" },
-            { q: "¿Cuál fue la primera foto nuestra que te gustó?", a: "espejo" },
-            { q: "¿A qué lugar viajamos juntos por primera vez?", a: "ayacucho" }
+    // --- DATOS DEL JUEGO ---
+    const config = {
+        questions: [
+            { t: "Encantamiento de Tiempo", q: "¿En qué fecha exacta comenzó nuestra magia? (DD/MM/AAAA)", a: "24/04/2024" },
+            { t: "Encantamiento de Reflejo", q: "¿Cuál fue la primera foto nuestra que capturó tu corazón?", a: "espejo" }, // Palabra clave
+            { t: "Aparición Conjunta", q: "¿A qué lugar mágico viajamos juntos por primera vez?", a: "ayacucho" }
         ],
-        msgs: ["¿Segura? El Mapa no miente... 🤨", "¡Por Merlín! Esa no es. ✨", "¡Piénsalo bien! 🪄"],
-        noTexts: ["¿Segura?", "Piénsalo bien...", "¿De verdad?", "¿Me estás hechizando?"]
+        errors: [
+            "El Mapa del Merodeador se burla de tu mala memoria.",
+            "¡Por las barbas de Merlín! Intenta de nuevo.",
+            "¿Un hechizo Confundus te ha golpeado?",
+            "Respuesta incorrecta. 10 puntos menos para Gryffindor."
+        ],
+        noTexts: [
+            "¿Estás segura? ⚡", 
+            "El Cáliz de Fuego ya te eligió... 🔥", 
+            "No puedes engañar a un objeto mágico... 📜",
+            "¡Piénsalo bien! 🧙‍♂️"
+        ]
     };
 
     let step = 0;
-    let noIdx = 0;
+    let noCount = 0;
 
-    // Crear velas flotantes
-    const container = document.getElementById('candles-container');
-    for (let i = 0; i < 25; i++) {
-        const c = document.createElement('div');
-        c.className = 'candle';
-        c.style.left = Math.random() * 95 + 'vw';
-        c.style.animationDelay = Math.random() * 10 + 's';
-        c.style.opacity = Math.random();
-        container.appendChild(c);
+    // --- GENERAR VELAS FLOTANTES ---
+    const hall = document.getElementById('great-hall');
+    for(let i=0; i<30; i++) {
+        const candle = document.createElement('div');
+        candle.classList.add('candle');
+        candle.style.left = Math.random() * 100 + '%';
+        candle.style.top = Math.random() * 100 + '%';
+        // Tamaños aleatorios para profundidad
+        const scale = Math.random() * 0.5 + 0.5; 
+        candle.style.transform = `scale(${scale})`;
+        candle.style.opacity = Math.random() * 0.5 + 0.5;
+        candle.style.animationDelay = Math.random() * 5 + 's';
+        hall.appendChild(candle);
     }
 
-    function iniciar() {
-        document.getElementById('audio-hp').play();
-        document.getElementById('screen-1').classList.add('hidden');
-        document.getElementById('screen-2').classList.remove('hidden');
-        updateQ();
-    }
-
-    function updateQ() {
-        document.getElementById('q-text').innerText = data.qs[step].q;
-        document.getElementById('ans-input').value = "";
-        document.getElementById('error-msg').innerText = "";
-    }
-
-    function validar() {
-        const val = document.getElementById('ans-input').value.toLowerCase().trim();
-        const correct = data.qs[step].a.toLowerCase();
+    // --- LÓGICA ---
+    function openMap() {
+        document.getElementById('bg-music').volume = 0.5;
+        document.getElementById('bg-music').play().catch(e => console.log("Audio autoplay bloqueado"));
         
-        if ((step !== 1 && val === correct) || (step === 1 && val.includes("espejo"))) {
-            // EFECTO EXPELLIARMUS
-            const flash = document.getElementById('spell-flash');
-            flash.classList.add('flash-anim');
-            setTimeout(() => flash.classList.remove('flash-anim'), 500);
+        document.getElementById('screen-start').classList.add('hidden');
+        document.getElementById('screen-game').classList.remove('hidden');
+        loadQuestion();
+    }
 
-            step++;
-            if (step < data.qs.length) updateQ();
-            else {
-                document.getElementById('screen-2').classList.add('hidden');
-                document.getElementById('screen-3').classList.remove('hidden');
-            }
+    function loadQuestion() {
+        const q = config.questions[step];
+        document.getElementById('q-title').innerText = q.t;
+        document.getElementById('q-text').innerText = q.q;
+        document.getElementById('ans-input').value = "";
+        document.getElementById('feedback').innerText = "";
+    }
+
+    function castSpell() {
+        const input = document.getElementById('ans-input').value.toLowerCase().trim();
+        const answer = config.questions[step].a.toLowerCase();
+        
+        // Verificación flexible para la pregunta 2 (espejo)
+        let isCorrect = false;
+        if(step === 1) { 
+            if(input.includes("espejo") || input.includes("foto")) isCorrect = true;
         } else {
-            document.getElementById('error-msg').innerText = data.msgs[Math.floor(Math.random()*data.msgs.length)];
+            if(input === answer) isCorrect = true;
+        }
+
+        if(isCorrect) {
+            // EFECTO LUMOS (Lento y suave)
+            const overlay = document.getElementById('lumos-overlay');
+            overlay.classList.add('active-spell');
+            
+            setTimeout(() => {
+                step++;
+                overlay.classList.remove('active-spell');
+                if(step < config.questions.length) {
+                    loadQuestion();
+                } else {
+                    document.getElementById('screen-game').classList.add('hidden');
+                    document.getElementById('screen-final').classList.remove('hidden');
+                }
+            }, 1500); // 1.5 segundos de luz
+        } else {
+            document.getElementById('feedback').innerText = config.errors[Math.floor(Math.random() * config.errors.length)];
+            // Temblor
+            const box = document.getElementById('parchment');
+            box.style.transform = "translateX(10px)";
+            setTimeout(() => box.style.transform = "translateX(0)", 200);
         }
     }
 
-    function piensalo() {
-        document.getElementById('no-btn').innerText = data.noTexts[noIdx % data.noTexts.length];
-        noIdx++;
+    function handleNo() {
+        const btn = document.getElementById('no-btn');
+        btn.innerText = config.noTexts[noCount % config.noTexts.length];
+        noCount++;
     }
 
-    function finalizar() {
-        document.getElementById('screen-3').classList.add('hidden');
-        document.getElementById('screen-4').classList.remove('hidden');
-        setInterval(lanzarMagia, 150);
+    function acceptProposal() {
+        document.getElementById('screen-final').classList.add('hidden');
+        document.getElementById('screen-love').classList.remove('hidden');
+        createFootsteps();
     }
 
-    function lanzarMagia() {
-        const m = document.createElement('div');
-        m.style.position = 'fixed';
-        m.style.left = Math.random() * 100 + 'vw';
-        m.style.top = '-20px';
-        m.style.fontSize = '20px';
-        m.innerText = ["⚡", "🌻", "❤️", "✨"][Math.floor(Math.random()*4)];
-        m.style.animation = `fall ${Math.random() * 2 + 2}s linear forwards`;
-        document.body.appendChild(m);
-        setTimeout(() => m.remove(), 4000);
+    function createFootsteps() {
+        setInterval(() => {
+            const el = document.createElement('div');
+            el.innerHTML = "👣";
+            el.className = 'footstep';
+            el.style.left = Math.random() * 80 + 10 + '%';
+            el.style.top = Math.random() * 80 + 10 + '%';
+            el.style.transform = `rotate(${Math.random()*360}deg)`;
+            document.body.appendChild(el);
+            setTimeout(() => el.remove(), 4000);
+        }, 500);
     }
+
 </script>
-
-<style>
-    @keyframes fall { to { transform: translateY(110vh) rotate(360deg); } }
-</style>
-
 </body>
 </html>
