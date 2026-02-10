@@ -8,200 +8,221 @@
         @import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Montserrat:wght@400;600&display=swap');
 
         :root {
-            --gold: #e6c200;
-            --dark-blue: #0a0e29;
-            --magic-glow: #00e1ff;
-            --romance: #ff4d6d;
+            --gold: #d4af37;
+            --spell-blue: #00d4ff;
+            --dark: #050505;
         }
 
-        body {
-            background: radial-gradient(circle at center, #1a1a40 0%, #000000 100%);
-            color: var(--gold);
+        body, html {
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            overflow: hidden; background: #000;
             font-family: 'Montserrat', sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            overflow: hidden;
-            text-align: center;
+            color: var(--gold);
         }
 
-        /* Partículas doradas de fondo */
-        #particles { position: absolute; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
-        .p { position: absolute; background: var(--gold); border-radius: 50%; opacity: 0.6; animation: float linear infinite; }
-        @keyframes float { to { transform: translateY(-110vh) rotate(360deg); } }
+        /* --- VIDEO DE FONDO Y VELAS --- */
+        #video-bg {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            object-fit: cover; opacity: 0.3; z-index: -1;
+        }
 
-        #main-box {
-            background: rgba(10, 14, 41, 0.95);
+        #candles-container {
+            position: fixed; width: 100%; height: 100%; z-index: 0;
+            pointer-events: none;
+        }
+
+        .candle {
+            position: absolute; width: 4px; height: 30px;
+            background: #fff; border-radius: 2px;
+            box-shadow: 0 0 10px #fff, 0 -5px 15px orange;
+            animation: flicker 2s infinite alternate, floatUp 15s linear infinite;
+        }
+        @keyframes flicker { 0% { opacity: 0.8; } 100% { opacity: 1; } }
+        @keyframes floatUp { from { transform: translateY(110vh); } to { transform: translateY(-20vh); } }
+
+        /* --- DESTELLO EXPELLIARMUS --- */
+        #spell-flash {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: white; box-shadow: inset 0 0 100px var(--spell-blue);
+            z-index: 100; opacity: 0; pointer-events: none;
+        }
+        .flash-anim { animation: expelliarmus 0.5s ease-out; }
+        @keyframes expelliarmus {
+            0% { opacity: 0; } 50% { opacity: 1; } 100% { opacity: 0; }
+        }
+
+        /* --- CONTENEDOR PRINCIPAL --- */
+        #interface {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            height: 100vh; position: relative; z-index: 10;
+        }
+
+        #magic-card {
+            background: rgba(0, 0, 0, 0.75);
             border: 2px solid var(--gold);
-            padding: 2rem;
-            border-radius: 15px;
-            box-shadow: 0 0 50px rgba(230, 194, 0, 0.3);
-            width: 90%;
-            max-width: 400px;
-            z-index: 10;
+            padding: 40px 20px; border-radius: 15px;
+            width: 85%; max-width: 450px; text-align: center;
             backdrop-filter: blur(10px);
-            position: relative;
+            box-shadow: 0 0 30px rgba(212, 175, 55, 0.2);
         }
 
-        h1, h2, h3 { font-family: 'Cinzel Decorative', serif; margin: 15px 0; }
-        .separator { border: 0; height: 1px; background: linear-gradient(to right, transparent, var(--gold), transparent); margin: 15px 0; }
+        h1 { font-family: 'Cinzel Decorative', serif; font-size: 1.8rem; margin-bottom: 5px; }
+        .separator { height: 1px; width: 70%; background: var(--gold); margin: 15px auto; opacity: 0.5; }
 
         input {
             background: transparent; border: none; border-bottom: 2px solid var(--gold);
-            color: white; font-size: 1.1rem; text-align: center; width: 90%;
-            padding: 10px; margin: 20px 0; outline: none;
+            color: #fff; font-size: 1.2rem; text-align: center; width: 90%;
+            margin: 25px 0; outline: none; padding: 10px;
         }
 
         .btn {
-            background: var(--gold); color: black; border: none;
-            padding: 15px 25px; font-family: 'Cinzel Decorative', serif;
+            background: var(--gold); color: #000; border: none;
+            padding: 15px 30px; font-family: 'Cinzel Decorative', serif;
             font-weight: bold; border-radius: 50px; cursor: pointer;
-            width: 100%; transition: 0.3s; margin-top: 10px;
-            box-shadow: 0 5px 15px rgba(230, 194, 0, 0.4);
+            width: 100%; transition: 0.3s;
         }
 
-        #magic-icon { font-size: 60px; display: block; margin: 10px 0; transition: 0.5s; }
         .hidden { display: none !important; }
 
-        /* Lluvia final */
-        .drop { position: absolute; top: -50px; animation: fall linear forwards; z-index: 5; }
-        @keyframes fall { to { transform: translateY(110vh) rotate(360deg); } }
+        /* Estilo para los diálogos del botón NO */
+        #no-btn { background: transparent; border: 1px solid #444; color: #666; margin-top: 10px; }
     </style>
 </head>
 <body>
 
-<audio id="music" loop>
-    <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" type="audio/mpeg">
+<div id="spell-flash"></div>
+
+<video id="video-bg" autoplay muted loop playsinline>
+    <source src="https://assets.mixkit.co/videos/preview/mixkit-starry-night-sky-over-a-calm-lake-4375-large.mp4" type="video/mp4">
+</video>
+
+<div id="candles-container"></div>
+
+<audio id="audio-hp" loop>
+    <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3" type="audio/mpeg">
 </audio>
 
-<div id="particles"></div>
+<div id="interface">
+    <div id="magic-card">
+        <div id="screen-1">
+            <h1>"Travesura Realizada"</h1>
+            <div class="separator"></div>
+            <p style="font-style: italic;">Juro solemnemente que mis intenciones no son buenas...</p>
+            <br>
+            <button class="btn" onclick="iniciar()">Revelar Mapa</button>
+        </div>
 
-<div id="main-box">
-    <div id="screen-start">
-        <h1>✨ ALOHOMORA ✨</h1>
-        <div class="separator"></div>
-        <p>Juro solemnemente que mis intenciones no son buenas...</p>
-        <button class="btn" onclick="startExperience()">TRAVESURA REALIZADA</button>
-    </div>
+        <div id="screen-2" class="hidden">
+            <h2 id="q-title" style="font-family: 'Cinzel Decorative';">Hechizo de Apertura</h2>
+            <p id="q-text" style="font-size: 0.9rem; opacity: 0.8;"></p>
+            <input type="text" id="ans-input" placeholder="Tu respuesta..." autocomplete="off">
+            <button class="btn" onclick="validar()">Lanzar Hechizo</button>
+            <p id="error-msg" style="color: #ff4444; font-size: 0.8rem; margin-top: 15px; min-height: 20px;"></p>
+        </div>
 
-    <div id="screen-game" class="hidden">
-        <small id="header-text" style="letter-spacing: 2px;">[PROYECTO GIRASOL]</small>
-        <div class="separator"></div>
-        <span id="magic-icon">🌱</span>
-        <p id="q-text">Cargando hechizo...</p>
-        <input type="text" id="ans-input" placeholder="Tu respuesta..." autocomplete="off">
-        <button class="btn" onclick="checkAnswer()">Lanzar Hechizo</button>
-        <p id="msg" style="font-size: 0.8rem; color: #ff6666; margin-top: 10px; min-height: 20px;"></p>
-    </div>
+        <div id="screen-3" class="hidden">
+            <h1>✨ Propuesta Mágica ✨</h1>
+            <div class="separator"></div>
+            <p>Has completado el mapa del merodeador.</p>
+            <h2 style="font-size: 1.4rem;">¿Quieres ser mi San Valentín?</h2>
+            <button class="btn" style="background: #00ff41; color: #000;" onclick="finalizar()">¡SÍ, ACEPTO!</button>
+            <button class="btn" id="no-btn" onclick="piensalo()">No</button>
+        </div>
 
-    <div id="screen-final" class="hidden">
-        <h2>🌻 HECHIZO COMPLETADO 🌻</h2>
-        <div class="separator"></div>
-        <p>Has demostrado ser una hechicera excepcional.</p>
-        <h3>¿Quieres ser mi San Valentín?</h3>
-        <button class="btn" style="background: #00ff41;" onclick="celebrate()">¡SÍ, ACEPTO!</button>
-        <button class="btn" id="no-btn" style="background: #444; color: #ccc;" onclick="handleNo()">No</button>
-    </div>
-
-    <div id="screen-love" class="hidden">
-        <h1 style="font-size: 2.5rem;">✨ ❤️ ✨</h1>
-        <h2>TRAVESURA REALIZADA</h2>
-        <p>Eres mi mejor aventura. ¡Feliz San Valentín!</p>
+        <div id="screen-4" class="hidden">
+            <h1 style="color: var(--gold); font-size: 2.2rem;">⚡</h1>
+            <h2>Travesura Realizada</h2>
+            <p>Nos vemos en el Gran Comedor.</p>
+        </div>
     </div>
 </div>
 
 <script>
-    const config = {
-        questions: [
-            { q: "¿En qué fecha comenzó todo? (DD/MM/AAAA)", a: "24/04/2024" },
-            { q: "¿Cuál fue la primera foto nuestra que te gustó?", a: "espejo" }, // Aceptará si contiene "espejo"
+    const data = {
+        qs: [
+            { q: "¿En qué fecha (DD/MM/AAAA) comenzó nuestra historia?", a: "24/04/2024" },
+            { q: "¿Cuál fue la primera foto nuestra que te gustó?", a: "espejo" },
             { q: "¿A qué lugar viajamos juntos por primera vez?", a: "ayacucho" }
         ],
-        sarcasm: [
-            "¡Por las barbas de Merlín! Intenta de nuevo. 🧙‍♂️",
-            "¿Un muggle te borró la memoria? 🤨",
-            "¡Cómo no te vas a acordar! Piénsalo bien. ✨",
-            "Error 9¾: Respuesta no válida. 🚂"
-        ],
-        noMessages: ["¿Estás segura? 🤨", "Piénsalo bien... ✨", "¿De verdad? 🥺", "¡No puedes decir que no! 🪄"]
+        msgs: ["¿Segura? El Mapa no miente... 🤨", "¡Por Merlín! Esa no es. ✨", "¡Piénsalo bien! 🪄"],
+        noTexts: ["¿Segura?", "Piénsalo bien...", "¿De verdad?", "¿Me estás hechizando?"]
     };
 
     let step = 0;
     let noIdx = 0;
 
-    // Crear fondo
-    for(let i=0; i<40; i++) {
-        let p = document.createElement('div');
-        p.className = 'p';
-        p.style.left = Math.random() * 100 + 'vw';
-        p.style.width = p.style.height = Math.random() * 5 + 'px';
-        p.style.animationDuration = Math.random() * 5 + 5 + 's';
-        p.style.top = Math.random() * 100 + 'vh';
-        document.getElementById('particles').appendChild(p);
+    // Crear velas flotantes
+    const container = document.getElementById('candles-container');
+    for (let i = 0; i < 25; i++) {
+        const c = document.createElement('div');
+        c.className = 'candle';
+        c.style.left = Math.random() * 95 + 'vw';
+        c.style.animationDelay = Math.random() * 10 + 's';
+        c.style.opacity = Math.random();
+        container.appendChild(c);
     }
 
-    function startExperience() {
-        const music = document.getElementById('music');
-        music.play().catch(() => console.log("Audio bloqueado"));
-        document.getElementById('screen-start').classList.add('hidden');
-        document.getElementById('screen-game').classList.remove('hidden');
-        loadQ();
+    function iniciar() {
+        document.getElementById('audio-hp').play();
+        document.getElementById('screen-1').classList.add('hidden');
+        document.getElementById('screen-2').classList.remove('hidden');
+        updateQ();
     }
 
-    function loadQ() {
-        document.getElementById('q-text').innerText = config.questions[step].q;
+    function updateQ() {
+        document.getElementById('q-text').innerText = data.qs[step].q;
         document.getElementById('ans-input').value = "";
-        document.getElementById('msg').innerText = "";
+        document.getElementById('error-msg').innerText = "";
     }
 
-    function checkAnswer() {
+    function validar() {
         const val = document.getElementById('ans-input').value.toLowerCase().trim();
-        const correct = config.questions[step].a.toLowerCase();
+        const correct = data.qs[step].a.toLowerCase();
         
-        // Lógica: La 1 y 3 exactas, la 2 que contenga la palabra "espejo"
         if ((step !== 1 && val === correct) || (step === 1 && val.includes("espejo"))) {
+            // EFECTO EXPELLIARMUS
+            const flash = document.getElementById('spell-flash');
+            flash.classList.add('flash-anim');
+            setTimeout(() => flash.classList.remove('flash-anim'), 500);
+
             step++;
-            if (step === 1) document.getElementById('magic-icon').innerText = "🌿";
-            if (step === 2) document.getElementById('magic-icon').innerText = "🌻";
-            
-            if (step < config.questions.length) loadQ();
-            else showFinal();
+            if (step < data.qs.length) updateQ();
+            else {
+                document.getElementById('screen-2').classList.add('hidden');
+                document.getElementById('screen-3').classList.remove('hidden');
+            }
         } else {
-            document.getElementById('msg').innerText = config.sarcasm[Math.floor(Math.random()*config.sarcasm.length)];
+            document.getElementById('error-msg').innerText = data.msgs[Math.floor(Math.random()*data.msgs.length)];
         }
     }
 
-    function showFinal() {
-        document.getElementById('screen-game').classList.add('hidden');
-        document.getElementById('screen-final').classList.remove('hidden');
-    }
-
-    function handleNo() {
-        const btn = document.getElementById('no-btn');
-        btn.innerText = config.noMessages[noIdx % config.noMessages.length];
+    function piensalo() {
+        document.getElementById('no-btn').innerText = data.noTexts[noIdx % data.noTexts.length];
         noIdx++;
-        // Pequeño efecto de vibración
-        document.getElementById('main-box').animate([
-            { transform: 'translateX(0)' }, { transform: 'translateX(5px)' }, { transform: 'translateX(0)' }
-        ], { duration: 100 });
     }
 
-    function celebrate() {
-        document.getElementById('screen-final').classList.add('hidden');
-        document.getElementById('screen-love').classList.remove('hidden');
-        setInterval(() => {
-            const d = document.createElement('div');
-            d.className = 'drop';
-            d.innerText = ["❤️", "🌻", "✨", "⚡"][Math.floor(Math.random()*4)];
-            d.style.left = Math.random() * 100 + 'vw';
-            d.style.fontSize = Math.random() * 20 + 20 + 'px';
-            d.style.animationDuration = Math.random() * 2 + 3 + 's';
-            document.body.appendChild(d);
-            setTimeout(() => d.remove(), 5000);
-        }, 200);
+    function finalizar() {
+        document.getElementById('screen-3').classList.add('hidden');
+        document.getElementById('screen-4').classList.remove('hidden');
+        setInterval(lanzarMagia, 150);
+    }
+
+    function lanzarMagia() {
+        const m = document.createElement('div');
+        m.style.position = 'fixed';
+        m.style.left = Math.random() * 100 + 'vw';
+        m.style.top = '-20px';
+        m.style.fontSize = '20px';
+        m.innerText = ["⚡", "🌻", "❤️", "✨"][Math.floor(Math.random()*4)];
+        m.style.animation = `fall ${Math.random() * 2 + 2}s linear forwards`;
+        document.body.appendChild(m);
+        setTimeout(() => m.remove(), 4000);
     }
 </script>
+
+<style>
+    @keyframes fall { to { transform: translateY(110vh) rotate(360deg); } }
+</style>
+
 </body>
 </html>
