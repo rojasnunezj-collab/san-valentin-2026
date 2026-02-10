@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Para Wen</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Playfair+Display:ital@0;1&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Playfair+Display:ital,wght@0,400;1,400&display=swap');
 
         :root {
             --gold: #ffd700;
@@ -26,19 +26,46 @@
             text-align: center;
         }
 
-        /* --- TIPOGRAFÍA --- */
+        /* --- TIPOGRAFÍA (Recuperando el estilo bonito) --- */
         h1, h2 {
             font-family: 'Cinzel Decorative', serif;
             font-weight: 700;
             margin: 15px 0;
             letter-spacing: 2px;
-            text-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5); /* Brillo dorado suave */
         }
 
         p {
             font-size: 1.1rem;
             color: var(--gold-dim);
             line-height: 1.6;
+        }
+
+        /* --- INTRODUCCIÓN CORREGIDA (Centrada y sin moverse) --- */
+        #intro {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #000; z-index: 100;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            cursor: pointer;
+            transition: opacity 2s ease;
+        }
+
+        .intro-text {
+            font-family: 'Cinzel Decorative', serif;
+            font-size: 1.8rem;
+            color: transparent; /* Empieza invisible */
+            text-shadow: none;
+            background: linear-gradient(90deg, var(--gold), #fff, var(--gold));
+            background-size: 200%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            opacity: 0;
+            animation: emergeAndShine 4s forwards; /* Animación de aparecer */
+        }
+
+        .tap-hint {
+            font-size: 0.8rem; color: #666; margin-top: 20px;
+            opacity: 0; animation: fadeIn 2s 3s forwards;
         }
 
         /* --- INPUT --- */
@@ -71,8 +98,7 @@
             text-transform: uppercase;
             letter-spacing: 2px;
             margin-top: 10px;
-            position: relative;
-            overflow: hidden;
+            border-radius: 5px;
         }
         .btn-gold:hover {
             background: var(--gold);
@@ -80,24 +106,7 @@
             box-shadow: 0 0 30px var(--gold);
         }
 
-        /* --- PANTALLAS --- */
-        #intro {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #000; z-index: 100;
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            cursor: pointer;
-            transition: opacity 1.5s ease;
-        }
-
-        .typewriter {
-            font-size: 1.5rem;
-            border-right: 2px solid var(--gold);
-            white-space: nowrap;
-            overflow: hidden;
-            animation: typing 3.5s steps(40, end), blink .75s step-end infinite;
-            max-width: 90%;
-        }
-
+        /* --- JUEGO --- */
         #game-container {
             opacity: 0;
             transition: opacity 1.5s ease;
@@ -105,7 +114,7 @@
             display: none; z-index: 10;
         }
 
-        /* --- CANVAS PARA EL FINAL --- */
+        /* --- CANVAS FINAL (Fuegos Artificiales y Partículas) --- */
         canvas {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             pointer-events: none; z-index: 50;
@@ -120,8 +129,12 @@
         }
         .flash-active { opacity: 1 !important; }
 
-        @keyframes typing { from { width: 0 } to { width: 100% } }
-        @keyframes blink { 50% { border-color: transparent } }
+        /* Animaciones CSS */
+        @keyframes emergeAndShine {
+            0% { opacity: 0; transform: scale(0.9); filter: blur(5px); }
+            50% { opacity: 1; transform: scale(1); filter: blur(0); color: var(--gold-dim); }
+            100% { opacity: 1; transform: scale(1); filter: blur(0); color: var(--gold); text-shadow: 0 0 20px var(--gold); }
+        }
         @keyframes fadeIn { to { opacity: 1 } }
 
         .hidden { display: none !important; }
@@ -140,8 +153,8 @@
 <canvas id="fireworksCanvas"></canvas>
 
 <div id="intro" onclick="startExperience()">
-    <div class="typewriter">Juro solemnemente...</div>
-    <p style="font-size: 0.8rem; margin-top: 20px; opacity: 0; animation: fadeIn 2s 3s forwards;">(Toca la pantalla)</p>
+    <div class="intro-text">Juro solemnemente...</div>
+    <div class="tap-hint">(Toca la pantalla)</div>
 </div>
 
 <div id="game-container">
@@ -160,12 +173,12 @@
     </div>
 
     <div id="final-box" class="hidden">
-        <h1 style="font-size: 2.5rem; margin-bottom: 10px; color: #fff; text-shadow: 0 0 20px var(--gold);">⚡ Travesura Realizada ⚡</h1>
-        <p style="margin-bottom: 40px; color: #fff;">El juramento es eterno.</p>
+        <h1 style="font-size: 2.2rem; margin-bottom: 10px; color: #fff; text-shadow: 0 0 20px var(--gold);">⚡ Travesura Realizada ⚡</h1>
+        <p style="margin-bottom: 40px; color: #ddd;">El juramento es eterno.</p>
         
-        <h2 style="margin-bottom: 30px; font-size: 1.8rem;">¿Quieres ser mi San Valentín?</h2>
+        <h2 style="margin-bottom: 30px; font-size: 1.5rem;">¿Quieres ser mi San Valentín?</h2>
         
-        <button class="btn-gold" style="font-size: 1.2rem; background: rgba(0,0,0,0.5);" onclick="celebrate()">¡SÍ, ACEPTO!</button>
+        <button class="btn-gold" style="font-size: 1.2rem; background: rgba(0,0,0,0.8); border-color: #fff; color: #fff;" onclick="celebrate()">¡SÍ, ACEPTO!</button>
         <br>
         <button id="no-btn" class="btn-gold" onclick="handleNo()">No</button>
     </div>
@@ -189,14 +202,13 @@
     function startExperience() {
         const music = document.getElementById('bg-music');
         music.volume = 0.5;
-        // Promesa para asegurar reproducción
         const playPromise = music.play();
         
         if (playPromise !== undefined) {
             playPromise.then(_ => {
                 console.log("Audio iniciado correctamente");
             }).catch(error => {
-                console.log("Autoplay bloqueado, se intentará de nuevo en la siguiente interacción.");
+                console.log("Autoplay bloqueado, se intentará de nuevo.");
             });
         }
 
@@ -209,7 +221,7 @@
             game.style.display = 'block';
             setTimeout(() => game.style.opacity = 1, 100);
             loadQ();
-        }, 1500);
+        }, 2000);
     }
 
     function loadQ() {
@@ -261,7 +273,7 @@
         document.getElementById('no-btn').innerText = txts[noIdx++ % txts.length];
     }
 
-    /* --- SISTEMA DE PARTÍCULAS (CANVAS) --- */
+    /* --- SISTEMA DE PARTÍCULAS CANVAS (FINAL LENTO Y VISUAL) --- */
     const canvas = document.getElementById('fireworksCanvas');
     const ctx = canvas.getContext('2d');
     canvas.width = window.innerWidth;
@@ -276,16 +288,13 @@
         // Lanzar bucle de animación
         animateParticles();
         
-        // Explosiones continuas
+        // Generar partículas constantemente (más densidad)
         setInterval(() => {
-            createExplosion(Math.random() * canvas.width, Math.random() * canvas.height);
-        }, 500);
-        
-        // Explosión inicial grande
-        createExplosion(canvas.width / 2, canvas.height / 2, 200);
+            createExplosion(Math.random() * canvas.width, Math.random() * canvas.height, 30);
+        }, 300); // Frecuencia de explosiones
     }
 
-    function createExplosion(x, y, count = 100) {
+    function createExplosion(x, y, count) {
         for (let i = 0; i < count; i++) {
             particles.push(new Particle(x, y));
         }
@@ -295,21 +304,25 @@
         constructor(x, y) {
             this.x = x;
             this.y = y;
+            // Velocidad más lenta para que se aprecie mejor
             const angle = Math.random() * Math.PI * 2;
-            const velocity = Math.random() * 6 + 2;
+            const velocity = Math.random() * 3 + 1; // Más lento
             this.vx = Math.cos(angle) * velocity;
             this.vy = Math.sin(angle) * velocity;
             this.alpha = 1;
-            this.decay = Math.random() * 0.015 + 0.005;
-            this.color = Math.random() > 0.5 ? '#ffd700' : '#ffffff'; // Oro y Blanco
-            this.size = Math.random() * 3 + 1;
+            // Desvanecimiento más lento
+            this.decay = Math.random() * 0.005 + 0.002; 
+            // Colores: Oro, Blanco y un toque de azul mágico
+            const colors = ['#ffd700', '#ffffff', '#87CEEB', '#ffecb3'];
+            this.color = colors[Math.floor(Math.random() * colors.length)];
+            this.size = Math.random() * 4 + 1;
         }
 
         draw() {
             ctx.save();
             ctx.globalAlpha = this.alpha;
             ctx.fillStyle = this.color;
-            ctx.shadowBlur = 10;
+            ctx.shadowBlur = 15; // Más brillo
             ctx.shadowColor = this.color;
             ctx.beginPath();
             ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
@@ -320,14 +333,14 @@
         update() {
             this.x += this.vx;
             this.y += this.vy;
-            this.vy += 0.05; // Gravedad
+            this.vy += 0.02; // Gravedad muy suave (flotan más)
             this.alpha -= this.decay;
         }
     }
 
     function animateParticles() {
         requestAnimationFrame(animateParticles);
-        ctx.clearRect(0, 0, canvas.width, canvas.height); // Limpiar canvas
+        ctx.clearRect(0, 0, canvas.width, canvas.height); 
         
         particles.forEach((particle, index) => {
             particle.update();
