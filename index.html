@@ -5,133 +5,121 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Para Wen</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Playfair+Display:ital,wght@0,400;1,400&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Dancing+Script:wght@600&family=IM+Fell+DW+Pica:ital@0;1&display=swap');
 
         :root {
-            --gold: #ffd700;
-            --gold-dim: #b8860b;
-            --spell: #a6e7ff;
+            --ink: #3e2723;   /* Color tinta oscura */
+            --paper: #dcd0b3; /* Color pergamino */
+            --paper-dark: #b8aa8a;
+            --magic: #6a1b9a; /* Púrpura mágico sutil */
         }
 
         body {
-            background: #000;
-            color: var(--gold);
-            font-family: 'Playfair Display', serif;
+            background-color: #000; /* Empieza en negro cine */
             margin: 0;
             height: 100vh;
             overflow: hidden;
             display: flex;
             justify-content: center;
             align-items: center;
-            text-align: center;
-            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="%23ffd700" d="M7.5 5.6L10 7 8.6 4.5 10 2 7.5 3.4 5 2 6.4 4.5 5 7zM19 2l-2.5 1.4L14 2l1.4 2.5L14 7l2.5-1.4L19 7l-1.4-2.5zm-5.6 15l2.5-1.4L18.4 18l-1.4-2.5L19.5 14l-2.5 1.4L18.4 13l-1.4 2.5L14.5 14l2.5 1.4L15.6 18z"/></svg>'), auto;
+            font-family: 'IM Fell DW Pica', serif; /* Tipografía de libro antiguo */
         }
 
-        /* --- INTRODUCCIÓN ÉPICA --- */
+        /* --- TEXTURA DE PERGAMINO (FONDO) --- */
+        #parchment-layer {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle, var(--paper), var(--paper-dark));
+            opacity: 0;
+            transition: opacity 3s ease-in-out; /* Transición MUY lenta (3 segundos) */
+            z-index: 1;
+            /* Efecto de papel viejo granulado */
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.1'/%3E%3C/svg%3E");
+        }
+
+        /* --- PANTALLA INTRO (NEGRA) --- */
         #intro-layer {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #050505; z-index: 100;
+            background: #000; z-index: 100;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
+            color: #ccc;
             transition: opacity 2s ease-out;
         }
-        
-        .typewriter h1 {
+
+        .fade-text {
             font-family: 'Cinzel Decorative', serif;
-            font-size: 1.5rem;
-            overflow: hidden; 
-            border-right: .15em solid var(--gold); 
-            white-space: nowrap; 
-            margin: 0 auto; 
-            letter-spacing: .15em; 
-            animation: typing 3.5s steps(40, end), blink-caret .75s step-end infinite;
-            max-width: 90%;
+            font-size: 1.2rem;
+            letter-spacing: 3px;
+            opacity: 0;
+            animation: textReveal 4s forwards; /* 4 segundos de aparición */
         }
 
-        .start-btn {
-            margin-top: 50px; opacity: 0;
-            background: transparent; color: var(--gold);
-            border: 2px solid var(--gold); padding: 15px 40px;
-            font-family: 'Cinzel Decorative', serif; font-size: 1.2rem;
-            cursor: pointer; box-shadow: 0 0 20px var(--gold-dim);
-            animation: fadeIn 2s forwards 3.5s; /* Aparece después del texto */
+        /* --- HUELLAS QUE CAMINAN --- */
+        .footstep {
+            position: absolute;
+            color: var(--ink);
+            font-size: 20px;
+            opacity: 0;
+            transform: rotate(90deg);
+            filter: blur(1px);
         }
 
-        /* --- EL GRAN COMEDOR (FONDO) --- */
-        #great-hall {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none; z-index: 0; opacity: 0;
-            transition: opacity 3s ease-in;
-            background: radial-gradient(circle at center, #1a1a2e 0%, #000 90%);
+        /* --- CONTENEDOR CENTRAL --- */
+        #map-content {
+            position: relative; z-index: 10;
+            width: 80%; max-width: 500px;
+            text-align: center;
+            opacity: 0;
+            transition: opacity 2s ease-in 1s; /* Aparece 1s después del fondo */
         }
 
-        .candle {
-            position: absolute; width: 6px; height: 40px;
-            background: rgba(255,255,255,0.8);
-            box-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
-            animation: floatCandle 6s infinite ease-in-out alternate;
-        }
-        .candle::before {
-            content: ''; position: absolute; top: -15px; left: -2px;
-            width: 10px; height: 15px; background: #ffcc00; border-radius: 50%;
-            box-shadow: 0 0 20px #ffcc00, 0 0 40px #ff4500;
-            animation: flame 0.1s infinite alternate;
-        }
+        h1, h2 { font-family: 'Cinzel Decorative', serif; color: var(--ink); }
+        p { color: var(--ink); font-size: 1.3rem; }
 
-        /* --- CONTENEDOR PRINCIPAL --- */
-        #content-layer {
-            position: relative; z-index: 10; width: 90%; max-width: 600px;
-            opacity: 0; transition: opacity 1s; display: none;
-        }
-
-        h1, h2 { font-family: 'Cinzel Decorative', serif; text-shadow: 0 0 10px var(--gold); }
-        h1 { font-size: 2rem; line-height: 1.2; }
-        
-        .question-box {
-            background: rgba(0, 0, 0, 0.7);
-            border: 1px solid var(--gold-dim);
-            padding: 30px; border-radius: 15px;
-            box-shadow: 0 0 50px rgba(0,0,0,0.8);
-            backdrop-filter: blur(5px);
-            transform: scale(0.9); transition: all 0.5s;
+        /* Efecto Tinta Apareciendo */
+        .ink-reveal {
+            color: transparent;
+            text-shadow: 0 0 20px var(--ink);
+            animation: inkFocus 2.5s forwards;
         }
 
         input {
-            background: transparent; border: none; border-bottom: 2px solid var(--gold);
-            color: #fff; font-size: 1.3rem; text-align: center; width: 100%;
-            padding: 10px; margin: 30px 0; outline: none; font-family: 'Playfair Display', serif;
+            background: transparent; border: none;
+            border-bottom: 2px solid var(--ink);
+            color: var(--ink); font-family: 'Dancing Script', cursive;
+            font-size: 1.8rem; text-align: center; width: 100%;
+            margin: 30px 0; outline: none;
         }
 
-        .btn-action {
-            background: linear-gradient(45deg, var(--gold-dim), var(--gold));
-            color: #000; border: none; padding: 12px 30px;
-            font-family: 'Cinzel Decorative', serif; font-weight: bold; font-size: 1rem;
-            cursor: pointer; border-radius: 2px;
-            box-shadow: 0 0 15px var(--gold);
-            transition: transform 0.2s;
+        .btn-magic {
+            background: transparent;
+            color: var(--ink);
+            border: 2px solid var(--ink);
+            padding: 15px 40px;
+            font-family: 'Cinzel Decorative', serif;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: 0.5s;
+            margin-top: 20px;
         }
-        .btn-action:active { transform: scale(0.95); }
+        .btn-magic:hover {
+            background: var(--ink); color: var(--paper);
+            box-shadow: 0 0 15px rgba(62, 39, 35, 0.5);
+        }
 
-        /* --- ANIMACIONES --- */
-        @keyframes typing { from { width: 0 } to { width: 100% } }
-        @keyframes blink-caret { from, to { border-color: transparent } 50% { border-color: var(--gold) } }
-        @keyframes fadeIn { to { opacity: 1; } }
-        @keyframes floatCandle { from { transform: translateY(0); } to { transform: translateY(-20px); } }
-        @keyframes flame { from { opacity: 0.8; transform: scale(1); } to { opacity: 1; transform: scale(1.1); } }
-        @keyframes spellCast { 0% { box-shadow: 0 0 0 0 var(--spell); } 100% { box-shadow: 0 0 100px 50px transparent; } }
-
-        /* --- FINAL --- */
-        #final-screen { display: none; }
         .hidden { display: none !important; }
 
-        #no-btn { background: #333; color: #777; border: none; box-shadow: none; margin-top: 15px; }
+        /* ANIMACIONES */
+        @keyframes textReveal { 0% { opacity: 0; letter-spacing: 10px; } 100% { opacity: 1; letter-spacing: 3px; } }
+        @keyframes inkFocus { 0% { color: transparent; text-shadow: 0 0 20px var(--ink); } 100% { color: var(--ink); text-shadow: 0 0 0 var(--ink); } }
         
-        /* Partículas Mágicas JS */
-        .sparkle {
-            position: fixed; width: 4px; height: 4px; background: var(--gold);
-            border-radius: 50%; pointer-events: none;
-            animation: fadeOut 1s forwards;
+        /* Animación de huellas caminando */
+        @keyframes walk {
+            0% { opacity: 0; }
+            20% { opacity: 0.6; }
+            80% { opacity: 0.6; }
+            100% { opacity: 0; }
         }
-        @keyframes fadeOut { to { opacity: 0; transform: translateY(-20px); } }
 
     </style>
 </head>
@@ -141,170 +129,176 @@
     <source src="https://ia801309.us.archive.org/23/items/Harry_Potter_Theme_Song_Hedwigs_Theme/Harry_Potter_Theme_Song_Hedwigs_Theme.mp3" type="audio/mpeg">
 </audio>
 
-<div id="intro-layer">
-    <div class="typewriter">
-        <h1>Juro solemnemente...</h1>
-    </div>
-    <p style="font-size: 0.8rem; margin-top: 10px; color: #666; opacity: 0; animation: fadeIn 2s forwards 4s;">(Sube el volumen 🔊)</p>
-    <button class="start-btn" onclick="startEpicJourney()">REVELAR SECRETOS</button>
+<div id="parchment-layer"></div>
+
+<div id="intro-layer" onclick="startCinematic()">
+    <h1 class="fade-text">Juro solemnemente...</h1>
+    <p style="font-size: 0.8rem; margin-top: 20px; opacity: 0.5; animation: fadeIn 2s 3s forwards;">(Toca la pantalla)</p>
 </div>
 
-<div id="great-hall"></div>
-
-<div id="content-layer">
+<div id="map-content" class="hidden">
     
-    <div id="game-box" class="question-box">
-        <h3 id="header-text" style="color: var(--gold-dim); font-size: 0.9rem; letter-spacing: 2px;">MESSRS. MOONY, WORMTAIL, PADFOOT & PRONGS</h3>
-        <p style="font-size: 0.9rem; margin-bottom: 20px;">Presentan sus respetos a <strong>Wen</strong> y solicitan la contraseña.</p>
+    <div id="header-section">
+        <h2 style="font-size: 1rem; letter-spacing: 2px; border-bottom: 1px solid var(--ink); padding-bottom: 10px; display: inline-block;">MESSRS. MOONY, WORMTAIL, PADFOOT & PRONGS</h2>
+        <p style="margin-top: 30px; font-style: italic;">Saludan a la Srta. <strong>Wen</strong></p>
+    </div>
+
+    <div id="game-section">
+        <p id="q-text" class="ink-reveal" style="font-size: 1.5rem; margin-top: 40px;">Cargando tinta...</p>
         
-        <hr style="border-color: rgba(255,215,0,0.3); margin: 20px 0;">
-        
-        <h2 id="q-text">Cargando...</h2>
         <input type="text" id="ans-input" placeholder="Lumos..." autocomplete="off">
         
-        <button class="btn-action" onclick="castSpell()">LANZAR HECHIZO ✨</button>
-        <p id="error-msg" style="color: #ff5555; min-height: 20px; font-size: 0.9rem; margin-top: 10px;"></p>
+        <button class="btn-magic" onclick="checkAnswer()">Revelar</button>
+        <p id="feedback" style="font-family: 'Dancing Script'; font-size: 1.2rem; color: #8a2be2; min-height: 30px; margin-top: 10px;"></p>
     </div>
 
-    <div id="final-screen" class="question-box" style="text-align: center;">
-        <h1 style="font-size: 2.5rem; color: var(--gold);">⚡ Travesura Realizada ⚡</h1>
-        <p style="font-size: 1.2rem; margin: 20px 0;">El mapa nunca miente, Wen.</p>
-        <h2 style="font-family: 'Playfair Display'; font-style: italic;">¿Quieres ser mi San Valentín?</h2>
-        
-        <button class="btn-action" style="font-size: 1.2rem; margin-top: 20px;" onclick="accept()">¡SÍ, JURAMENTO INQUEBRANTABLE!</button>
-        <br>
-        <button id="no-btn" class="btn-action" onclick="refuse()">No</button>
-    </div>
-
-    <div id="nox-screen" class="hidden" style="text-align: center;">
-        <h1 style="font-size: 4rem; text-shadow: 0 0 30px #ff0055;">❤️</h1>
-        <h2 style="font-size: 3rem;">NOX.</h2>
-        <p>(Apaga la luz y bésame)</p>
+    <div id="final-section" class="hidden">
+        <h1 style="font-size: 3rem; margin-bottom: 10px;">Travesura Realizada</h1>
+        <p style="font-family: 'Dancing Script'; font-size: 1.8rem;">Siempre.</p> <div style="margin-top: 50px;">
+             <h2 style="font-size: 1.2rem;">¿Quieres ser mi San Valentín?</h2>
+             <button class="btn-magic" onclick="finish()">Sí, Juro</button>
+             <button class="btn-magic" id="no-btn" style="border: none; font-size: 0.8rem;" onclick="handleNo()">No</button>
+        </div>
     </div>
 
 </div>
 
 <script>
-    /* --- CONFIGURACIÓN --- */
-    const config = {
-        questions: [
+    const data = {
+        qs: [
             { q: "¿En qué fecha comenzó nuestra historia? (DD/MM/AAAA)", a: "24/04/2024" },
             { q: "¿Cuál fue la primera foto nuestra que te gustó?", a: "espejo" },
             { q: "¿A qué lugar mágico viajamos juntos por primera vez?", a: "ayacucho" }
         ],
-        errors: [
-            "El Mapa se borra... respuesta incorrecta.",
-            "¡Por las barbas de Merlín! Intenta de nuevo.",
-            "¿Un muggle te está dictando? ¡Error!",
-            "10 puntos menos para Gryffindor."
-        ],
-        noOptions: ["¿Estás segura?", "Piénsalo bien...", "¿De verdad?", "Imposible decir no"]
+        errors: ["El pergamino rechaza esa respuesta...", "Intenta concentrarte...", "La tinta se borra..."]
     };
 
     let step = 0;
     let noCount = 0;
 
-    /* --- INICIO ÉPICO --- */
-    function startEpicJourney() {
+    // --- FUNCIÓN DE INICIO CINEMATOGRÁFICO ---
+    function startCinematic() {
+        const intro = document.getElementById('intro-layer');
+        const parchment = document.getElementById('parchment-layer');
+        const content = document.getElementById('map-content');
         const music = document.getElementById('bg-music');
-        music.volume = 0.6;
-        music.play().then(() => {
-            console.log("Música iniciada");
-        }).catch(e => {
-            console.log("Interacción necesaria para audio");
-        });
 
-        // Desvanecer intro
-        document.getElementById('intro-layer').style.opacity = '0';
+        // 1. Música
+        music.volume = 0.5;
+        music.play();
+
+        // 2. Transición Lenta
+        intro.style.opacity = 0;
+        
         setTimeout(() => {
-            document.getElementById('intro-layer').style.display = 'none';
-            // Aparecer fondo y contenido
-            document.getElementById('great-hall').style.opacity = '1';
-            const content = document.getElementById('content-layer');
-            content.style.display = 'block';
-            setTimeout(() => content.style.opacity = '1', 500);
-            createCandles();
-            loadQuestion();
+            intro.style.display = 'none';
+            // Fondo aparece suavemente
+            parchment.style.opacity = 1;
+            
+            // Iniciar huellas
+            startFootsteps();
+
+            // Contenido aparece después del fondo
+            content.classList.remove('hidden');
+            setTimeout(() => {
+                content.style.opacity = 1;
+                loadQuestion();
+            }, 1000);
         }, 2000);
     }
 
-    /* --- LÓGICA DEL JUEGO --- */
-    function loadQuestion() {
-        document.getElementById('q-text').innerText = config.questions[step].q;
-        document.getElementById('ans-input').value = "";
-        document.getElementById('error-msg').innerText = "";
+    // --- LOGICA DE HUELLAS (ANIMACIÓN) ---
+    function startFootsteps() {
+        setInterval(() => {
+            if(Math.random() > 0.6) return; // Aleatoriedad
+            
+            const foot = document.createElement('div');
+            foot.innerHTML = "👣";
+            foot.className = 'footstep';
+            
+            // Posición aleatoria
+            foot.style.left = Math.random() * 80 + 10 + '%';
+            foot.style.top = Math.random() * 80 + 10 + '%';
+            
+            // Rotación aleatoria para parecer caminar
+            foot.style.transform = `rotate(${Math.random() * 360}deg)`;
+            
+            // Animación
+            foot.style.animation = "walk 4s forwards";
+            
+            document.getElementById('parchment-layer').appendChild(foot);
+            
+            // Limpieza
+            setTimeout(() => foot.remove(), 4000);
+        }, 800);
     }
 
-    function castSpell() {
+    function loadQuestion() {
+        const textEl = document.getElementById('q-text');
+        // Reiniciar animación de tinta
+        textEl.classList.remove('ink-reveal');
+        void textEl.offsetWidth; // Trigger reflow
+        textEl.classList.add('ink-reveal');
+        
+        textEl.innerText = data.qs[step].q;
+        document.getElementById('ans-input').value = "";
+        document.getElementById('feedback').innerText = "";
+    }
+
+    function checkAnswer() {
         const input = document.getElementById('ans-input').value.toLowerCase().trim();
-        const correct = config.questions[step].a.toLowerCase();
-        const box = document.getElementById('game-box');
+        const correct = data.qs[step].a.toLowerCase();
+        
+        // Validación flexible para "espejo"
+        let ok = false;
+        if (step === 1 && (input.includes("espejo") || input.includes("foto"))) ok = true;
+        else if (input === correct) ok = true;
 
-        // Validación flexible
-        let isMatch = false;
-        if (step === 1 && (input.includes("espejo") || input.includes("foto"))) isMatch = true;
-        else if (input === correct) isMatch = true;
-
-        if (isMatch) {
-            // Efecto de hechizo
-            box.style.animation = "spellCast 0.5s";
-            setTimeout(() => box.style.animation = "", 500);
-            
+        if (ok) {
             step++;
-            if (step < config.questions.length) {
-                setTimeout(loadQuestion, 300);
+            if(step < data.qs.length) {
+                // Efecto de transición suave
+                document.getElementById('map-content').style.opacity = 0;
+                setTimeout(() => {
+                    loadQuestion();
+                    document.getElementById('map-content').style.opacity = 1;
+                }, 1000);
             } else {
-                document.getElementById('game-box').style.display = 'none';
-                document.getElementById('final-screen').style.display = 'block';
+                showFinal();
             }
         } else {
-            // Error
-            document.getElementById('error-msg').innerText = config.errors[Math.floor(Math.random() * config.errors.length)];
-            box.style.transform = "translateX(10px) scale(0.9)";
-            setTimeout(() => box.style.transform = "translateX(0) scale(0.9)", 200);
+            const err = document.getElementById('feedback');
+            err.innerText = data.errors[Math.floor(Math.random()*data.errors.length)];
+            // Temblor suave
+            document.getElementById('map-content').style.transform = "translateX(5px)";
+            setTimeout(()=>document.getElementById('map-content').style.transform = "translateX(0)", 200);
         }
     }
 
-    function refuse() {
-        const btn = document.getElementById('no-btn');
-        btn.innerText = config.noOptions[noCount % config.noOptions.length];
+    function showFinal() {
+        document.getElementById('game-section').classList.add('hidden');
+        document.getElementById('header-section').classList.add('hidden');
+        
+        const final = document.getElementById('final-section');
+        final.classList.remove('hidden');
+        // Animación de entrada
+        final.style.opacity = 0;
+        setTimeout(() => final.style.opacity = 1, 500);
+    }
+
+    function handleNo() {
+        const texts = ["¿Segura?", "Piénsalo bien...", "Imposible.", "Wen, por favor..."];
+        document.getElementById('no-btn').innerText = texts[noCount % texts.length];
         noCount++;
     }
 
-    function accept() {
-        document.getElementById('final-screen').classList.add('hidden');
-        document.getElementById('nox-screen').classList.remove('hidden');
+    function finish() {
+        alert("❤️ ¡Gracias por aceptar esta travesura! Te amo.");
     }
-
-    /* --- EFECTOS VISUALES --- */
-    function createCandles() {
-        const hall = document.getElementById('great-hall');
-        for(let i=0; i<30; i++) {
-            const c = document.createElement('div');
-            c.className = 'candle';
-            c.style.left = Math.random() * 100 + '%';
-            c.style.top = Math.random() * 80 + '%';
-            c.style.animationDuration = (Math.random() * 3 + 3) + 's';
-            c.style.opacity = Math.random();
-            hall.appendChild(c);
-        }
-    }
-
-    // Partículas al mover el mouse
-    document.addEventListener('mousemove', function(e) {
-        if(Math.random() > 0.8) { // No crear demasiadas
-            const s = document.createElement('div');
-            s.className = 'sparkle';
-            s.style.left = e.pageX + 'px';
-            s.style.top = e.pageY + 'px';
-            document.body.appendChild(s);
-            setTimeout(() => s.remove(), 1000);
-        }
-    });
     
-    // Permitir Enter
-    document.getElementById('ans-input').addEventListener("keypress", function(event) {
-        if (event.key === "Enter") castSpell();
+    // Enter key
+    document.getElementById('ans-input').addEventListener("keypress", (e) => {
+        if(e.key === "Enter") checkAnswer();
     });
 
 </script>
