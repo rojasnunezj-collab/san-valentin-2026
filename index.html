@@ -8,9 +8,9 @@
         @import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Playfair+Display:ital@0;1&display=swap');
 
         :root {
-            --gold: #ffd700;       /* Oro brillante */
-            --gold-dim: #c5a059;   /* Oro apagado */
-            --bg: #050510;         /* Negro noche profunda */
+            --gold: #ffd700;
+            --gold-dim: #c5a059;
+            --bg: #050510;
         }
 
         body {
@@ -26,13 +26,13 @@
             text-align: center;
         }
 
-        /* --- ESTILOS DE TEXTO (Los que te gustaron) --- */
+        /* --- TIPOGRAFÍA --- */
         h1, h2 {
             font-family: 'Cinzel Decorative', serif;
             font-weight: 700;
             margin: 15px 0;
             letter-spacing: 2px;
-            text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+            text-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
         }
 
         p {
@@ -41,7 +41,7 @@
             line-height: 1.6;
         }
 
-        /* --- INPUT MINIMALISTA --- */
+        /* --- INPUT --- */
         input {
             background: transparent;
             border: none;
@@ -56,9 +56,9 @@
             outline: none;
             transition: 0.3s;
         }
-        input:focus { border-bottom-color: var(--gold); }
+        input:focus { border-bottom-color: var(--gold); box-shadow: 0 10px 20px -10px rgba(255,215,0,0.2); }
 
-        /* --- BOTÓN ELEGANTE --- */
+        /* --- BOTÓN --- */
         .btn-gold {
             background: transparent;
             color: var(--gold);
@@ -71,14 +71,16 @@
             text-transform: uppercase;
             letter-spacing: 2px;
             margin-top: 10px;
+            position: relative;
+            overflow: hidden;
         }
         .btn-gold:hover {
             background: var(--gold);
             color: #000;
-            box-shadow: 0 0 20px var(--gold);
+            box-shadow: 0 0 30px var(--gold);
         }
 
-        /* --- INTRODUCCIÓN --- */
+        /* --- PANTALLAS --- */
         #intro {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #000; z-index: 100;
@@ -96,48 +98,46 @@
             max-width: 90%;
         }
 
-        /* --- CAPAS DEL JUEGO --- */
         #game-container {
             opacity: 0;
             transition: opacity 1.5s ease;
-            width: 90%;
-            max-width: 600px;
-            display: none; /* Oculto al inicio */
+            width: 90%; max-width: 600px;
+            display: none; z-index: 10;
         }
 
-        /* --- EFECTOS VISUALES --- */
-        /* Destello suave */
+        /* --- CANVAS PARA EL FINAL --- */
+        canvas {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 50;
+        }
+
+        /* --- EFECTOS --- */
         #flash {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle, rgba(255,255,255,0.4) 0%, transparent 70%);
-            opacity: 0; pointer-events: none; z-index: 50;
-            transition: opacity 1s ease;
+            background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, transparent 70%);
+            opacity: 0; pointer-events: none; z-index: 60;
+            transition: opacity 0.8s ease;
         }
         .flash-active { opacity: 1 !important; }
-
-        /* Partículas doradas finales */
-        .particle {
-            position: absolute; width: 4px; height: 4px; background: var(--gold);
-            border-radius: 50%; animation: floatUp 3s linear forwards;
-        }
 
         @keyframes typing { from { width: 0 } to { width: 100% } }
         @keyframes blink { 50% { border-color: transparent } }
         @keyframes fadeIn { to { opacity: 1 } }
-        @keyframes floatUp { to { transform: translateY(-100vh) rotate(360deg); opacity: 0; } }
 
         .hidden { display: none !important; }
-        #no-btn { border: none; font-size: 0.9rem; color: #666; margin-top: 20px; text-transform: none; letter-spacing: 1px; }
+        #no-btn { border: none; font-size: 0.9rem; color: #666; margin-top: 20px; }
 
     </style>
 </head>
 <body>
 
-<audio id="bg-music" loop>
+<audio id="bg-music" loop preload="auto">
     <source src="https://ia802804.us.archive.org/31/items/HarryPotterWaltz/HarryPotterWaltz.mp3" type="audio/mpeg">
 </audio>
 
 <div id="flash"></div>
+
+<canvas id="fireworksCanvas"></canvas>
 
 <div id="intro" onclick="startExperience()">
     <div class="typewriter">Juro solemnemente...</div>
@@ -154,20 +154,18 @@
 
     <div id="question-box">
         <h1 id="q-text" style="font-size: 1.5rem; line-height: 1.4;">Cargando...</h1>
-        
         <input type="text" id="ans-input" placeholder="Lumos..." autocomplete="off">
-        
         <button class="btn-gold" onclick="checkAnswer()">Revelar</button>
         <p id="error-msg" style="color: #ff6b6b; font-size: 0.9rem; margin-top: 15px; min-height: 20px;"></p>
     </div>
 
     <div id="final-box" class="hidden">
-        <h1 style="font-size: 2.5rem; margin-bottom: 10px;">Travesura Realizada</h1>
-        <p style="margin-bottom: 40px;">El mapa ha revelado la verdad.</p>
+        <h1 style="font-size: 2.5rem; margin-bottom: 10px; color: #fff; text-shadow: 0 0 20px var(--gold);">⚡ Travesura Realizada ⚡</h1>
+        <p style="margin-bottom: 40px; color: #fff;">El juramento es eterno.</p>
         
-        <h2 style="margin-bottom: 30px;">¿Quieres ser mi San Valentín?</h2>
+        <h2 style="margin-bottom: 30px; font-size: 1.8rem;">¿Quieres ser mi San Valentín?</h2>
         
-        <button class="btn-gold" style="font-size: 1.2rem;" onclick="celebrate()">¡SÍ, ACEPTO!</button>
+        <button class="btn-gold" style="font-size: 1.2rem; background: rgba(0,0,0,0.5);" onclick="celebrate()">¡SÍ, ACEPTO!</button>
         <br>
         <button id="no-btn" class="btn-gold" onclick="handleNo()">No</button>
     </div>
@@ -187,11 +185,20 @@
     let step = 0;
     let noIdx = 0;
 
-    // --- INICIO ---
+    /* --- SISTEMA DE AUDIO ROBUSTO --- */
     function startExperience() {
         const music = document.getElementById('bg-music');
         music.volume = 0.5;
-        music.play();
+        // Promesa para asegurar reproducción
+        const playPromise = music.play();
+        
+        if (playPromise !== undefined) {
+            playPromise.then(_ => {
+                console.log("Audio iniciado correctamente");
+            }).catch(error => {
+                console.log("Autoplay bloqueado, se intentará de nuevo en la siguiente interacción.");
+            });
+        }
 
         const intro = document.getElementById('intro');
         intro.style.opacity = 0;
@@ -205,7 +212,6 @@
         }, 1500);
     }
 
-    // --- JUEGO ---
     function loadQ() {
         document.getElementById('q-text').innerText = data.qs[step].q;
         document.getElementById('ans-input').value = "";
@@ -221,7 +227,7 @@
         else if(val === correct) ok = true;
 
         if(ok) {
-            // Efecto Destello
+            // Destello
             const flash = document.getElementById('flash');
             flash.classList.add('flash-active');
             
@@ -230,10 +236,10 @@
                 step++;
                 if(step < data.qs.length) loadQ();
                 else showFinal();
-            }, 1000);
+            }, 800);
         } else {
             document.getElementById('error-msg').innerText = data.errs[Math.floor(Math.random()*data.errs.length)];
-            // Shake suave
+            // Shake
             const box = document.getElementById('game-container');
             box.style.transform = "translateX(5px)";
             setTimeout(() => box.style.transform = "translateX(0)", 200);
@@ -255,23 +261,85 @@
         document.getElementById('no-btn').innerText = txts[noIdx++ % txts.length];
     }
 
+    /* --- SISTEMA DE PARTÍCULAS (CANVAS) --- */
+    const canvas = document.getElementById('fireworksCanvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    let particles = [];
+
     function celebrate() {
         document.querySelector('h2').innerText = "¡SIEMPRE!";
         document.querySelector('.btn-gold').style.display = 'none';
         document.getElementById('no-btn').style.display = 'none';
 
-        // Lluvia de partículas simple y elegante
+        // Lanzar bucle de animación
+        animateParticles();
+        
+        // Explosiones continuas
         setInterval(() => {
-            const p = document.createElement('div');
-            p.className = 'particle';
-            p.style.left = Math.random() * 100 + 'vw';
-            p.style.top = '100vh';
-            p.style.backgroundColor = Math.random() > 0.5 ? '#ffd700' : '#87CEEB'; // Oro y Azul
-            p.style.animationDuration = Math.random() * 2 + 3 + 's';
-            document.body.appendChild(p);
-            setTimeout(() => p.remove(), 5000);
-        }, 100);
+            createExplosion(Math.random() * canvas.width, Math.random() * canvas.height);
+        }, 500);
+        
+        // Explosión inicial grande
+        createExplosion(canvas.width / 2, canvas.height / 2, 200);
     }
+
+    function createExplosion(x, y, count = 100) {
+        for (let i = 0; i < count; i++) {
+            particles.push(new Particle(x, y));
+        }
+    }
+
+    class Particle {
+        constructor(x, y) {
+            this.x = x;
+            this.y = y;
+            const angle = Math.random() * Math.PI * 2;
+            const velocity = Math.random() * 6 + 2;
+            this.vx = Math.cos(angle) * velocity;
+            this.vy = Math.sin(angle) * velocity;
+            this.alpha = 1;
+            this.decay = Math.random() * 0.015 + 0.005;
+            this.color = Math.random() > 0.5 ? '#ffd700' : '#ffffff'; // Oro y Blanco
+            this.size = Math.random() * 3 + 1;
+        }
+
+        draw() {
+            ctx.save();
+            ctx.globalAlpha = this.alpha;
+            ctx.fillStyle = this.color;
+            ctx.shadowBlur = 10;
+            ctx.shadowColor = this.color;
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+        }
+
+        update() {
+            this.x += this.vx;
+            this.y += this.vy;
+            this.vy += 0.05; // Gravedad
+            this.alpha -= this.decay;
+        }
+    }
+
+    function animateParticles() {
+        requestAnimationFrame(animateParticles);
+        ctx.clearRect(0, 0, canvas.width, canvas.height); // Limpiar canvas
+        
+        particles.forEach((particle, index) => {
+            particle.update();
+            particle.draw();
+            if (particle.alpha <= 0) particles.splice(index, 1);
+        });
+    }
+
+    window.addEventListener('resize', () => {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    });
 
     // Enter key
     document.getElementById('ans-input').addEventListener("keypress", (e) => {
