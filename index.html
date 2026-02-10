@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Propiedad del Príncipe Mestizo</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Montserrat:wght@300;500&display=swap');
+
+        :root {
+            --gold: #d4af37;
+            --dark-blue: #0a0e29;
+            --magic-glow: #4fd6ff;
+            --error: #ff3333;
+        }
+
+        body {
+            background: radial-gradient(ellipse at bottom, var(--dark-blue) 0%, #000000 100%);
+            color: var(--gold);
+            font-family: 'Montserrat', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Efecto de partículas mágicas de fondo */
+        .magic-particle {
+            position: absolute;
+            width: 4px; height: 4px;
+            background: var(--magic-glow);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--magic-glow), 0 0 20px var(--gold);
+            animation: floatUp linear infinite;
+            opacity: 0;
+        }
+        @keyframes floatUp {
+            0% { transform: translateY(100vh) scale(0); opacity: 0; }
+            20% { opacity: 1; }
+            100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+        }
+
+        #main-container {
+            background: rgba(10, 14, 41, 0.85);
+            border: 3px double var(--gold);
+            padding: 2.5rem;
+            border-radius: 15px;
+            box-shadow: 0 0 30px rgba(212, 175, 55, 0.3);
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+            z-index: 10;
+            backdrop-filter: blur(5px);
+            transition: all 0.5s ease;
+        }
+
+        h1, h2, h3 {
+            font-family: 'Cinzel Decorative', serif;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
+            margin-bottom: 10px;
+        }
+
+        .separator { border: 0; height: 1px; background: linear-gradient(to right, transparent, var(--gold), transparent); margin: 20px 0; }
+
+        /* Icono central cambiante */
+        #magic-icon { font-size: 70px; margin: 25px 0; transition: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: inline-block; }
+        .stage-1 { filter: brightness(0.7) sepia(1) hue-rotate(100deg); transform: scale(0.5); } /* Semilla */
+        .stage-2 { filter: brightness(0.9) sepia(0.5) hue-rotate(50deg); transform: scale(0.8); } /* Brote */
+        .stage-3 { filter: brightness(1.2) drop-shadow(0 0 15px var(--gold)); transform: scale(1); } /* Girasol */
+        .stage-final { animation: pulseGold 2s infinite; filter: drop-shadow(0 0 25px var(--gold)); }
+        @keyframes pulseGold { 0%, 100% { transform: scale(1.1); } 50% { transform: scale(1.15) rotate(5deg); } }
+
+        input {
+            background: rgba(0,0,0,0.3);
+            border: none;
+            border-bottom: 2px solid var(--gold);
+            color: var(--magic-glow);
+            font-family: 'Cinzel Decorative', serif;
+            font-size: 1.3rem;
+            text-align: center;
+            width: 100%;
+            padding: 10px;
+            outline: none;
+            margin: 20px 0;
+            transition: 0.3s;
+        }
+        input:focus { box-shadow: 0 10px 20px -10px rgba(79, 214, 255, 0.4); }
+
+        .btn {
+            background: linear-gradient(45deg, #996633, var(--gold));
+            color: #0a0e29;
+            border: 2px solid var(--gold);
+            padding: 12px 30px;
+            font-family: 'Cinzel Decorative', serif;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            border-radius: 50px;
+            transition: 0.3s;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+        }
+        .btn:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(212, 175, 55, 0.4); }
+
+        #sarcasm-msg { color: var(--error); font-style: italic; min-height: 25px; margin-top: 15px; font-family: 'Cinzel Decorative'; }
+        .hidden { display: none !important; }
+
+        /* Lluvia de corazones final */
+        .falling-heart { position: absolute; top: -50px; font-size: 25px; animation: fall linear forwards; z-index: 5; }
+        @keyframes fall { to { transform: translateY(110vh) rotate(720deg); } }
+
+        #no-btn { position: relative; transition: 0.1s; }
+    </style>
+</head>
+<body>
+
+<audio id="bg-music" loop>
+    <source src="https://cdn.pixabay.com/download/audio/2022/10/28/audio_b5550694b5.mp3?filename=fantasy-mystical-background-music-123339.mp3" type="audio/mpeg">
+</audio>
+
+<div id="particles-container"></div>
+
+<div id="main-container" class="start-screen">
+    <h1>⚡ Acceso Mágico Requerido ⚡</h1>
+    <hr class="separator">
+    <p>Para revelar los secretos de este girasol, debes demostrar que no eres un muggle.</p>
+    <br>
+    <button class="btn" onclick="startGame()">Juro solemnemente que mis intenciones no son buenas</button>
+</div>
+
+<div id="game-container" class="hidden">
+    <h2>✨ El Cultivo Encantado ✨</h2>
+    <hr class="separator">
+    
+    <div id="magic-icon-container">
+        <span id="magic-icon" class="stage-1">🌱</span>
+    </div>
+
+    <div id="quiz-section">
+        <p id="question-text" style="font-size: 1.2rem;">Cargando hechizo Lumos...</p>
+        <input type="text" id="user-answer" placeholder="Escribe tu respuesta mágica..." autocomplete="off">
+        <br>
+        <button class="btn" onclick="checkAnswer()">Lanzar Hechizo</button>
+        <p id="sarcasm-msg"></p>
+    </div>
+
+    <div id="final-msg" class="hidden">
+        <h1 style="color: var(--gold)">🌻 ¡Travesura Realizada! 🌻</h1>
+        <p>Has desbloqueado el corazón del sistema.</p>
+        <hr class="separator">
+        <h3>¿Quieres ser mi San Valentín y hacer magia juntos?</h3>
+        <br>
+        <button class="btn" onclick="celebrate()">¡SÍ, POR LAS BARBAS DE MERLÍN!</button>
+        <button class="btn" id="no-btn" style="background: #555; color: #ccc;" onmouseover="moveNo()">No (Avada Kedavra)</button>
+    </div>
+</div>
+
+<script>
+    // --- CONFIGURACIÓN DE TUS RESPUESTAS ---
+    const config = {
+        questions: [
+            { q: "¿En qué fecha exacta comenzó nuestra historia? (Formato DD/MM/AAAA)", a: "24/04/2024" },
+            { q: "Revelio: ¿Cuál fue la primera foto nuestra que te gustó de verdad?", a: ["frente", "espejo"] }, // Palabras clave
+            { q: "¿A qué lugar mágico viajamos juntos por primera vez?", a: "ayacucho" }
+        ],
+        harryPotterInsults: [
+            "¡Por las calzas de Dumbledore! Respuesta incorrecta. 🧙‍♂️",
+            "¿Segura que no eres un muggle infiltrado? Intenta de nuevo. 🤨",
+            "¡Esa respuesta es tan mala que casi invocas a un Dementor! ❄️",
+            "Tu memoria parece haber sido borrada con 'Obliviate'. ¡Concéntrate! ✨",
+            "10 puntos menos para Gryffindor por esa respuesta. 🦁"
+        ]
+    };
+
+    let currentStep = 0;
+    const magicIcon = document.getElementById('magic-icon');
+    const questionText = document.getElementById('question-text');
+    const userAnswer = document.getElementById('user-answer');
+    const sarcasmMsg = document.getElementById('sarcasm-msg');
+    const music = document.getElementById('bg-music');
+
+    // Crear fondo de partículas
+    function createParticles() {
+        const container = document.getElementById('particles-container');
+        for (let i = 0; i < 50; i++) {
+            let particle = document.createElement('div');
+            particle.className = 'magic-particle';
+            particle.style.left = Math.random() * 100 + 'vw';
+            particle.style.animationDuration = (Math.random() * 5 + 3) + 's';
+            particle.style.animationDelay = (Math.random() * 5) + 's';
+            container.appendChild(particle);
+        }
+    }
+    createParticles();
+
+    function startGame() {
+        document.querySelector('.start-screen').classList.add('hidden');
+        document.getElementById('game-container').classList.remove('hidden');
+        document.getElementById('main-container').style.maxWidth = "600px";
+        // Intentar reproducir música (requiere interacción previa)
+        music.volume = 0.3;
+        music.play().catch(e => console.log("El navegador bloqueó el autoplay, es normal."));
+        loadQuestion();
+    }
+
+    function loadQuestion() {
+        questionText.innerText = config.questions[currentStep].q;
+        sarcasmMsg.innerText = "";
+        userAnswer.value = "";
+        userAnswer.focus();
+    }
+
+    function checkAnswer() {
+        const input = userAnswer.value.toLowerCase().trim();
+        let isCorrect = false;
+
+        // Lógica especial para la pregunta 2 (palabras clave)
+        if (currentStep === 1) {
+            const keywords = config.questions[1].a;
+            // Verifica si contiene AMBAS palabras clave ("frente" Y "espejo")
+            if (input.includes(keywords[0]) && input.includes(keywords[1])) {
+                isCorrect = true;
+            }
+        } else {
+            // Para la 1 y la 3, la respuesta debe ser exacta
+            if (input === config.questions[currentStep].a.toLowerCase().trim()) {
+                isCorrect = true;
+            }
+        }
+
+        if (isCorrect) {
+            currentStep++;
+            updateVisuals();
+            
+            if (currentStep < config.questions.length) {
+                loadQuestion();
+            } else {
+                showFinal();
+            }
+        } else {
+            shakeBox();
+            sarcasmMsg.innerText = config.harryPotterInsults[Math.floor(Math.random() * config.harryPotterInsults.length)];
+        }
+    }
+
+    function updateVisuals() {
+        if (currentStep === 1) { magicIcon.innerText = "🌿"; magicIcon.className = "stage-2"; }
+        if (currentStep === 2) { magicIcon.innerText = "🌻"; magicIcon.className = "stage-3"; }
+    }
+
+    function showFinal() {
+        document.getElementById('quiz-section').classList.add('hidden');
+        document.getElementById('final-msg').classList.remove('hidden');
+        magicIcon.innerText = "🌻";
+        magicIcon.className = "stage-final";
+        questionText.innerText = "";
+    }
+
+    function shakeBox() {
+        const box = document.getElementById('main-container');
+        box.style.transform = "translateX(10px)";
+        setTimeout(() => box.style.transform = "translateX(-10px)", 50);
+        setTimeout(() => box.style.transform = "translateX(5px)", 100);
+        setTimeout(() => box.style.transform = "translateX(0)", 150);
+    }
+
+    function moveNo() {
+        const btn = document.getElementById('no-btn');
+        btn.style.position = 'absolute';
+        btn.style.top = Math.random() * 200 + "px";
+        btn.style.left = (Math.random() * 200 - 100) + "px";
+    }
+
+    function celebrate() {
+        document.getElementById('final-msg').innerHTML = "<h1 style='color:var(--gold)'>✨ ¡JURAMENTO INQUEBRANTABLE! ✨</h1><p>¡Eres mi hechicera favorita! Te amo.</p>";
+        setInterval(createHeart, 200);
+    }
+
+    function createHeart() {
+        const heart = document.createElement('div');
+        heart.classList.add('falling-heart');
+        heart.innerText = ["❤️", "✨", "🌻", "⚡"][Math.floor(Math.random()*4)];
+        heart.style.left = Math.random() * 100 + "vw";
+        heart.style.animationDuration = Math.random() * 3 + 2 + "s";
+        heart.style.color = Math.random() > 0.5 ? '#d4af37' : '#ff3333';
+        document.body.appendChild(heart);
+        setTimeout(() => heart.remove(), 5000);
+    }
+
+    userAnswer.addEventListener("keypress", (e) => { if(e.key === "Enter") checkAnswer(); });
+</script>
+</body>
+</html>
